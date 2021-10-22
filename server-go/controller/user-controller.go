@@ -35,7 +35,7 @@ func (c *userController) Login(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	}
-	authResult := c.userService.VerifyCredential(loggedUser.Username, loggedUser.Password)
+	authResult := c.userService.VerifyCredential(loggedUser.Email, loggedUser.Password)
 	if v, ok := authResult.(entity.User); ok {
 		generatedToken := c.jwtService.GenerateToken(v.Id)
 		v.Token = generatedToken
@@ -44,28 +44,26 @@ func (c *userController) Login(ctx *gin.Context) {
 		return
 	}
 	response := helper.BuildErrorResponse("Please check again your credential", "Invalid Credential", helper.EmptyObj{})
-	ctx.AbortWithStatusJSON(http.StatusUnauthorized, response)
+	ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
 }
 
 func (c *userController) Register(ctx *gin.Context) {
 	var newUser entity.User
 	errDTO := ctx.ShouldBind(&newUser)
-	if errDTO != nil {
+	if errDTO != nil || len(newUser.FirstName) == 0 || len(newUser.LastName) == 0 {
 		response := helper.BuildErrorResponse("Failed to process request", errDTO.Error(), helper.EmptyObj{})
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	}
 
-	if !c.userService.IsDuplicatedUsername(newUser.Username) {
-		response := helper.BuildErrorResponse("Failed to process request", "Duplicate username", helper.EmptyObj{})
-		ctx.JSON(http.StatusConflict, response)
-	} else if !c.userService.IsDuplicatedEmail(newUser.Email) {
+	if !c.userService.IsDuplicatedEmail(newUser.Email) {
 		response := helper.BuildErrorResponse("Failed to process request", "Duplicate email", helper.EmptyObj{})
 		ctx.JSON(http.StatusConflict, response)
 
 	} else {
 		createdUser := c.userService.CreateUser(newUser)
-		service.SendEmail("New account", "Ask.it", createdUser.Email, createdUser.Username, newUser.Password)
+		service.SendEmail("New account", "Ask.it", createdUser.Email,
+			createdUser.FirstName+" "+createdUser.LastName, newUser.Password)
 		response := helper.BuildResponse(true, "OK!", createdUser)
 		ctx.JSON(http.StatusCreated, response)
 	}

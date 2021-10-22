@@ -8,7 +8,6 @@ import (
 
 type UserService interface {
 	CreateUser(entity.User) entity.User
-	IsDuplicatedUsername(string) bool
 	IsDuplicatedEmail(string) bool
 	VerifyCredential(string, string) interface{}
 	// IsOldPasswordCorrect(models.User) bool
@@ -34,20 +33,15 @@ func CheckPasswordHash(password string, hash string) bool {
 	return err == nil
 }
 
-func (service *userService) VerifyCredential(username string, password string) interface{} {
-	res := service.userRepository.VerifyCredential(username, password)
+func (service *userService) VerifyCredential(email string, password string) interface{} {
+	res := service.userRepository.VerifyCredential(email, password)
 	if v, ok := res.(entity.User); ok {
 		comparedPassword := CheckPasswordHash(password, v.Passwordhash)
-		if v.Username == username && comparedPassword {
-			return entity.User{Id: v.Id, Username: v.Username, Email: v.Email}
+		if v.Email == email && comparedPassword {
+			return entity.User{Id: v.Id, Email: v.Email, FirstName: v.FirstName, LastName: v.LastName}
 		}
 	}
 	return false
-}
-
-func (service *userService) IsDuplicatedUsername(username string) bool {
-	res := service.userRepository.IsDuplicateUserName(username)
-	return res
 }
 
 func (service *userService) IsDuplicatedEmail(email string) bool {

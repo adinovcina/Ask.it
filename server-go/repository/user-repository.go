@@ -11,7 +11,6 @@ type UserRepository interface {
 	UpdateUser(entity.User) entity.User
 	CheckIfEmailExist(string) bool
 	VerifyCredential(string, string) interface{}
-	IsDuplicateUserName(string) bool
 	IsDuplicatedEmail(string) bool
 	FindUser(string) entity.User
 	// EditOldPassword(models.User)
@@ -34,8 +33,8 @@ func HashPassword(password string) string {
 
 func (db *userConnection) InsertUser(user entity.User) entity.User {
 	password := HashPassword(user.Password)
-	db.connection.Exec(`INSERT INTO user (Email, Username, PasswordHash) VALUES (?, ?, ?)`,
-		user.Email, user.Username, password)
+	db.connection.Exec(`INSERT INTO user (FirstName, LastName, Email, PasswordHash) VALUES (?, ?, ?, ?)`,
+		user.FirstName, user.LastName, user.Email, password)
 	return user
 }
 
@@ -55,19 +54,13 @@ func (db *userConnection) CheckIfEmailExist(username string) bool {
 	return user.Id != 0
 }
 
-func (db *userConnection) VerifyCredential(username string, password string) interface{} {
+func (db *userConnection) VerifyCredential(email string, password string) interface{} {
 	var user entity.User
-	res := db.connection.Where("username = ?", username).Find(&user)
+	res := db.connection.Where("email = ?", email).Find(&user)
 	if res.Error == nil {
 		return user
 	}
 	return nil
-}
-
-func (db *userConnection) IsDuplicateUserName(username string) bool {
-	var user entity.User
-	db.connection.Where("username = ?", username).Take(&user)
-	return user.Id == 0
 }
 
 func (db *userConnection) IsDuplicatedEmail(email string) bool {
