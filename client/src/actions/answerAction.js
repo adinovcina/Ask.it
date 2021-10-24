@@ -1,0 +1,38 @@
+import * as types from "../actionTypes";
+import axios from "axios";
+
+export const getAnswers = () => (dispatch) => {
+  axios
+    .get("/answer/")
+    .then((res) => res.data.data)
+    .then((answers) =>
+      dispatch({
+        type: types.GET_ANSWERS,
+        payload: answers,
+      })
+    );
+};
+
+export const createAnswer = (comment) => (dispatch) => {
+  axios
+    .post("/answer/", comment)
+    .then((res) => res.data.data)
+    .then((comm) =>
+      dispatch({
+        type: types.ADD_ANSWERS,
+        payload: comm,
+      })
+    );
+};
+
+export const update = (postData) => (dispatch) => {
+  axios
+    .post("/answer/grade/", postData)
+    .then((res) => res.data.data)
+    .then((post) =>
+      dispatch({
+        type: types.UPDATE_ANSWER_MARK,
+        payload: post,
+      })
+    );
+};

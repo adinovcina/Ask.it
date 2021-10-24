@@ -8,6 +8,8 @@ import (
 type PostService interface {
 	GetAll() []entity.Post
 	Insert(entity.Post) entity.Post
+	Update(entity.Post)
+	UpdateGrade(string, int) []entity.Post
 }
 
 type postService struct {
@@ -27,5 +29,14 @@ func (service *postService) GetAll() []entity.Post {
 
 func (service *postService) Insert(post entity.Post) entity.Post {
 	res := service.postRepository.Insert(post)
+	return res
+}
+
+func (service *postService) Update(post entity.Post) {
+	service.postRepository.Update(post)
+}
+
+func (service *postService) UpdateGrade(str string, postId int) []entity.Post {
+	res := service.postRepository.UpdateGrade(str, postId)
 	return res
 }

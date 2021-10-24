@@ -1,6 +1,5 @@
 import * as types from "../actionTypes";
 import axios from "axios";
-// import { persistor } from "../store";
 
 export const login = (postData) => (dispatch) => {
   axios

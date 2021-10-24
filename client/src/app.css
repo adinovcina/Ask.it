@@ -1,0 +1,97 @@
+#card {
+  margin: auto;
+  margin-top: 30px;
+  width: 60rem;
+  box-shadow: 10px 10px 5px grey;
+  border: 2px solid gray;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 10px;
+}
+
+#thumbUp {
+  color: green;
+  padding-bottom: 20px;
+}
+#thumbDown {
+  color: red;
+  padding-left: 20px;
+}
+
+#date {
+  font-size: 14px;
+  color: gray;
+}
+
+#cardText {
+  margin-bottom: 0px;
+  padding-left: 15px;
+}
+
+#body {
+  background-color: burlywood;
+}
+
+#comments {
+  float: right;
+  text-decoration: underline;
+}
+#postBy {
+  font-size: 20px;
+  font-weight: bold;
+  text-decoration: underline;
+  font-style: italic;
+  font-family: "Brush Script MT, Brush Script Std, cursive";
+}
+
+#loadMorePosts {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}
+#postForm {
+  background-color: black;
+  height: 200px;
+  width: 500px;
+  margin: 10px auto;
+  border-radius: 20px;
+}
+#question {
+  background: transparent;
+  border: none;
+  color: #131619;
+  display: block;
+  outline: 0;
+  width: 100%;
+}
+.question {
+  background: #fff;
+  border: 1px solid #e6e6f0;
+  padding: 10px;
+  position: relative;
+  margin: 15px 15px 0;
+  border-radius: 5px;
+}
+.header {
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 13px 15px 5px;
+  display: inline-block;
+  height: 30px;
+  box-sizing: border-box;
+}
+#questionnaire {
+  color: red;
+  font-size: 30px;
+}
+#btnSend {
+  background-color: red;
+  width: 150px;
+  height: 40px;
+  border-radius: 10px;
+  float: right;
+  margin: 20px 15px;
+}

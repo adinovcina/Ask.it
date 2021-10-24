@@ -1,2 +1,11 @@
 export const LOGIN = "LOGIN";
 export const REGISTER = "REGISTER";
+export const GET_POSTS = "GET_POSTS";
+export const NEW_POST = "NEW_POST";
+export const GET_ANSWERS = "GET_ANSWERS";
+export const GET_GRADES = "GET_GRADES";
+export const UPDATE = "UPDATE";
+export const GET_USER = "GET_USER";
+export const ADD_ANSWERS = "ADD_ANSWERS";
+export const GET_ANSWER_MARK = "GET_ANSWER_MARK";
+export const UPDATE_ANSWER_MARK = "UPDATE_ANSWER_MARK";

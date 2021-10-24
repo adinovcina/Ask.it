@@ -10,6 +10,8 @@ import (
 type PostRepository interface {
 	GetAll() []entity.Post
 	Insert(entity.Post) entity.Post
+	Update(entity.Post)
+	UpdateGrade(string, int) []entity.Post
 }
 
 type postConnection struct {
@@ -35,4 +37,25 @@ func (db *postConnection) Insert(newPost entity.Post) entity.Post {
 	db.connection.Exec(`INSERT INTO post (title, postdate, likes, dislikes, userid) VALUES (?, ?, ?, ?, ?)`,
 		newPost.Title, newPost.PostDate, 0, 0, newPost.UserId)
 	return newPost
+}
+
+func (db *postConnection) Update(newPost entity.Post) {
+	if newPost.Likes != 0 {
+		db.connection.Model(entity.Post{}).Where("id = ?", newPost.Id).
+			UpdateColumn("Likes", gorm.Expr("Likes + ?", 1))
+	} else {
+		db.connection.Model(entity.Post{}).Where("id = ?", newPost.Id).
+			UpdateColumn("Dislikes", gorm.Expr("Dislikes + ?", 1))
+	}
+}
+
+func (db *postConnection) UpdateGrade(str string, postId int) []entity.Post {
+	if str == "dislike" {
+		db.connection.Model(entity.Post{}).Where("id = ?", postId).
+			UpdateColumn("Dislikes", gorm.Expr("Dislikes - ?", 1))
+	} else {
+		db.connection.Model(entity.Post{}).Where("id = ?", postId).
+			UpdateColumn("Likes", gorm.Expr("Likes - ?", 1))
+	}
+	return db.GetAll()
 }
