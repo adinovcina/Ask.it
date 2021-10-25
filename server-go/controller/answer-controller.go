@@ -13,8 +13,9 @@ import (
 type AnswerController interface {
 	GetAll(context *gin.Context)
 	Insert(context *gin.Context)
-	// MostAnswers(context *gin.Context)
-	// UpdateAnswerMark(context *gin.Context)
+	MostAnswers(context *gin.Context)
+	EditAnswer(context *gin.Context)
+	DeleteAnswer(context *gin.Context)
 }
 
 type answerController struct {
@@ -54,8 +55,34 @@ func (c *answerController) Insert(context *gin.Context) {
 	}
 }
 
-// func (c *answerController) MostAnswers(context *gin.Context) {
-// 	var answers []models.MostAnswers = c.answerService.MostAnswers()
-// 	res := helper.BuildResponse(true, "OK", answers)
-// 	context.JSON(http.StatusOK, res)
-// }
+func (c *answerController) MostAnswers(context *gin.Context) {
+	var answers []entity.MostAnswers = c.answerService.MostAnswers()
+	res := helper.BuildResponse(true, "OK", answers)
+	context.JSON(http.StatusOK, res)
+}
+
+func (c *answerController) EditAnswer(context *gin.Context) {
+	var answer entity.Answer
+	err := context.ShouldBind(&answer)
+	if err != nil {
+		res := helper.BuildErrorResponse("Failed to process request", err.Error(), helper.EmptyObj{})
+		context.JSON(http.StatusBadRequest, res)
+	} else {
+		result := c.answerService.EditAnswer(answer)
+		response := helper.BuildResponse(true, "OK", result)
+		context.JSON(http.StatusOK, response)
+	}
+}
+
+func (c *answerController) DeleteAnswer(context *gin.Context) {
+	_id := context.Param("id")
+	stringToId, err := strconv.Atoi(_id)
+	if err != nil {
+		res := helper.BuildErrorResponse("Failed to process request", err.Error(), helper.EmptyObj{})
+		context.JSON(http.StatusBadRequest, res)
+	} else {
+		result := c.answerService.DeleteAnswer(stringToId)
+		response := helper.BuildResponse(true, "OK", result)
+		context.JSON(http.StatusOK, response)
+	}
+}

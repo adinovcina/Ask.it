@@ -10,6 +10,9 @@ import { store, persistor } from "./store";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Navbar from "./components/Navbar/Navbar";
+import MostLikes from "./components/MostLikes/MostLikes";
+import MostAnswers from "./components/MostAnswers/MostAnswers";
+import MyQuestions from "./components/MyQuestions/MyQuestions";
 
 axios.defaults.baseURL = "http://localhost:8080/api/";
 store.subscribe(() => {
@@ -23,10 +26,13 @@ ReactDOM.render(
       <BrowserRouter>
         <PersistGate persistor={persistor}>
           <Switch>
-            <Route path="/" component={LoginRegister} exact />
+            <Route path="/login" component={LoginRegister} exact />
             <>
               <Navbar />
-              <App path="/home" component={App} exact />
+              <Route path="/mostLikes" component={MostLikes} exact />
+              <Route path="/mostAnswers" component={MostAnswers} exact />
+              <Route path="/myQuestions" component={MyQuestions} exact />
+              <Route path="/" component={App} exact />
             </>
           </Switch>
         </PersistGate>

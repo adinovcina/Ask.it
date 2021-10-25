@@ -34,9 +34,6 @@ class App extends Component {
     this.props.createPost(this.state.post);
     const post = { ...this.state.post, title: "" };
     this.setState({ post });
-    setTimeout(() => {
-      this.props.getPosts();
-    }, 100);
   }
 
   handleLike(postId) {
@@ -216,7 +213,7 @@ class App extends Component {
   render() {
     return (
       <>
-        {this.props.user.id != undefined ? (
+        {this.props.user.id !== undefined ? (
           <div id="postForm">
             <header className="header">
               <i

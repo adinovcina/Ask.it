@@ -1,4 +1,5 @@
 export const LOGIN = "LOGIN";
+export const LOGOUT = "LOGOUT";
 export const REGISTER = "REGISTER";
 export const GET_POSTS = "GET_POSTS";
 export const NEW_POST = "NEW_POST";
@@ -9,3 +10,8 @@ export const GET_USER = "GET_USER";
 export const ADD_ANSWERS = "ADD_ANSWERS";
 export const GET_ANSWER_MARK = "GET_ANSWER_MARK";
 export const UPDATE_ANSWER_MARK = "UPDATE_ANSWER_MARK";
+export const GET_MOST_LIKES = "GET_MOST_LIKES";
+export const GET_MOST_ANSWERS = "GET_MOST_ANSWERS";
+export const UPDATE_ANSWER = "UPDATE_ANSWER";
+export const DELETE_ANSWER = "DELETE_ANSWER";
+export const MY_QUESTIONS = "MY_QUESTIONS";

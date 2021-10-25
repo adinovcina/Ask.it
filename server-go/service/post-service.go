@@ -10,6 +10,8 @@ type PostService interface {
 	Insert(entity.Post) entity.Post
 	Update(entity.Post)
 	UpdateGrade(string, int) []entity.Post
+	MostLikedPost() []entity.MostLikedPost
+	MyPosts(int) []entity.Post
 }
 
 type postService struct {
@@ -38,5 +40,15 @@ func (service *postService) Update(post entity.Post) {
 
 func (service *postService) UpdateGrade(str string, postId int) []entity.Post {
 	res := service.postRepository.UpdateGrade(str, postId)
+	return res
+}
+
+func (service *postService) MostLikedPost() []entity.MostLikedPost {
+	res := service.postRepository.MostLikedPost()
+	return res
+}
+
+func (service *postService) MyPosts(userId int) []entity.Post {
+	res := service.postRepository.MyPosts(userId)
 	return res
 }

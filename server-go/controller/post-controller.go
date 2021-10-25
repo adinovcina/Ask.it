@@ -13,6 +13,8 @@ import (
 type PostController interface {
 	GetAll(*gin.Context)
 	Insert(*gin.Context)
+	MostLikedPost(*gin.Context)
+	MyPosts(*gin.Context)
 }
 
 type postController struct {
@@ -49,5 +51,26 @@ func (c *postController) Insert(context *gin.Context) {
 		result := c.postService.Insert(post)
 		response := helper.BuildResponse(true, "OK", result)
 		context.JSON(http.StatusCreated, response)
+	}
+}
+
+func (c *postController) MostLikedPost(context *gin.Context) {
+	var posts []entity.MostLikedPost = c.postService.MostLikedPost()
+	res := helper.BuildResponse(true, "OK", posts)
+	context.JSON(http.StatusOK, res)
+}
+
+func (c *postController) MyPosts(context *gin.Context) {
+	authHeader := context.GetHeader("Authorization")
+	userID := service.GetUserIDByToken(authHeader)
+	convertedUserID, err := strconv.ParseInt(userID, 10, 64)
+	if err == nil {
+		userId := int(convertedUserID)
+		var posts []entity.Post = c.postService.MyPosts(userId)
+		res := helper.BuildResponse(true, "OK", posts)
+		context.JSON(http.StatusOK, res)
+	} else {
+		res := helper.BuildErrorResponse("Failed to process request", err.Error(), helper.EmptyObj{})
+		context.JSON(http.StatusBadRequest, res)
 	}
 }

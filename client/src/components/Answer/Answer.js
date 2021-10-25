@@ -4,7 +4,12 @@ import Card from "react-bootstrap/Card";
 import { getAnswerGrades } from "../../actions/answerGradeAction";
 import { update } from "../../actions/answerAction";
 import { getUser } from "../../actions/userAction";
-import { getAnswers, createAnswer } from "../../actions/answerAction";
+import {
+  getAnswers,
+  createAnswer,
+  editAnswer,
+  deleteAnswer,
+} from "../../actions/answerAction";
 import _ from "lodash";
 import "./answer.css";
 import Button from "react-bootstrap/Button";
@@ -18,6 +23,7 @@ class Answer extends Component {
       loadMore: 3,
       comment: "",
       show: false,
+      editComment: "",
     };
     this.handleLoadMore = this.handleLoadMore.bind(this);
     this.handleHide = this.handleHide.bind(this);
@@ -25,10 +31,45 @@ class Answer extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.onConfirm = this.onConfirm.bind(this);
+    this.handleEditComment = this.handleEditComment.bind(this);
+    this.onChange = this.onChange.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
+  }
+
+  handleEditComment(answer, e) {
+    const inputElement = e.target.parentElement.children[2];
+    const cancelBtn = e.target.parentElement.children[8];
+    inputElement.value = answer;
+    cancelBtn.style.display = "block";
+    inputElement.style.display = "block";
+  }
+
+  handleDelete(e, ansId) {
+    this.props.deleteAnswer(ansId);
+  }
+
+  handleCancel(answer, e) {
+    const inputElement = e.target.parentElement.children[2];
+    inputElement.style.display = "none";
+    inputElement.value = answer;
+    e.target.style.display = "none";
   }
 
   handleChange(e) {
     this.setState({ comment: e.target.value });
+  }
+
+  onChange(ansId, e) {
+    const editAnswer = {
+      id: ansId,
+      answer: e.target.value,
+    };
+    const inputBtn = e.target;
+    const editBtn = e.target.parentElement.children[8];
+    inputBtn.style.display = "none";
+    editBtn.style.display = "none";
+    this.props.editAnswer(editAnswer);
   }
 
   handleClick(e) {
@@ -41,9 +82,6 @@ class Answer extends Component {
       postid: p,
     };
     this.props.createAnswer(answer);
-    setTimeout(() => {
-      this.props.getAnswers();
-    }, 100);
     this.setState({ comment: "" });
   }
 
@@ -75,7 +113,7 @@ class Answer extends Component {
   }
 
   openCommentInput(e) {
-    if (this.props.user.id != undefined) {
+    if (this.props.user.id !== undefined) {
       var commentDiv = $(e.target.parentElement).find("#commentDiv");
       if (commentDiv[0].style.display === "none")
         commentDiv[0].style.display = "block";
@@ -184,6 +222,17 @@ class Answer extends Component {
                   : ans.User.firstname + " " + ans.User.lastname + " : "}
               </span>
               {ans.answer}
+              <br />
+              <input
+                style={{ width: "100%", display: "none" }}
+                defaultValue={ans.answer}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    this.onChange(ans.id, e);
+                  }
+                }}
+              />
               <i
                 className="fa fa-thumbs-up fa-like"
                 style={{
@@ -217,9 +266,33 @@ class Answer extends Component {
                   ? "today"
                   : days + " days ago"}
               </i>
+              {userId === ans.userid ? (
+                <i
+                  className="fa fa-trash"
+                  aria-hidden="true"
+                  id="trashBtn"
+                  onClick={(e) => this.handleDelete(e, ans.id)}
+                ></i>
+              ) : null}
+              {userId === ans.userid ? (
+                <i
+                  className="fa fa-edit"
+                  id="editBtn"
+                  onClick={(e) => this.handleEditComment(ans.answer, e)}
+                ></i>
+              ) : null}
+              {userId === ans.userid ? (
+                <i
+                  className="fa fa-times"
+                  aria-hidden="true"
+                  id="cancelBtn"
+                  onClick={(e) => this.handleCancel(ans.answer, e)}
+                ></i>
+              ) : null}
             </Card.Text>
           );
         })
+        .reverse()
         .slice(0, this.state.loadMore);
     }
   }
@@ -297,4 +370,6 @@ export default connect(mapStateToProps, {
   getAnswerGrades,
   update,
   createAnswer,
+  editAnswer,
+  deleteAnswer,
 })(Answer);

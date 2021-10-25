@@ -1,5 +1,6 @@
 import * as types from "../actionTypes";
 import axios from "axios";
+import { persistor } from "../store";
 
 export const login = (postData) => (dispatch) => {
   axios
@@ -47,13 +48,13 @@ export const register = (postData) => (dispatch) => {
     );
 };
 
-// export const logout = () => (dispatch) => {
-//   persistor.pause();
-//   persistor.flush().then(() => {
-//     return persistor.purge();
-//   });
-//   dispatch({
-//     type: types.LOGOUT,
-//     payload: {},
-//   });
-// };
+export const logout = () => (dispatch) => {
+  persistor.pause();
+  persistor.flush().then(() => {
+    return persistor.purge();
+  });
+  dispatch({
+    type: types.LOGOUT,
+    payload: {},
+  });
+};

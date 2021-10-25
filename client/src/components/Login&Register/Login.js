@@ -46,7 +46,7 @@ class Login extends Component {
           <Redirect
             push
             to={{
-              pathname: "/home",
+              pathname: "/",
             }}
           />
         ) : null}

@@ -52,39 +52,36 @@ func main() {
 	postProtectedRoutes := r.Group("api/post", middleware.AuthorizeJWT(jwtService))
 	{
 		postProtectedRoutes.POST("/", postController.Insert)
+		postProtectedRoutes.GET("/myPosts", postController.MyPosts)
 	}
 
 	postRoutes := r.Group("api/post")
 	{
 		postRoutes.GET("/", postController.GetAll)
+		postRoutes.GET("/mostLikes", postController.MostLikedPost)
 	}
 
 	answerRoutes := r.Group("api/answer")
 	{
 		answerRoutes.GET("/", answerController.GetAll)
-		// answerRoutes.POST("/", answerController.Insert)
-		// answerRoutes.GET("/mostAnswers", answerController.MostAnswers)
-		// answerRoutes.PUT("/", answerController.UpdateAnswerMark)
+		answerRoutes.GET("/mostAnswers", answerController.MostAnswers)
 	}
 
 	answerProtectedRoutes := r.Group("api/answer", middleware.AuthorizeJWT(jwtService))
 	{
 		answerProtectedRoutes.POST("/", answerController.Insert)
-		// answerRoutes.GET("/mostAnswers", answerController.MostAnswers)
-		// answerRoutes.PUT("/", answerController.UpdateAnswerMark)
+		answerProtectedRoutes.PUT("/", answerController.EditAnswer)
+		answerProtectedRoutes.DELETE("/:id", answerController.DeleteAnswer)
 	}
 
 	gradePostRoutes := r.Group("api/grade")
 	{
 		gradePostRoutes.GET("/", postUserController.GetAll)
-		// gradeRoutes.POST("/", postUserController.Insert)
-		// gradeRoutes.PUT("/", postUserController.Put)
 	}
 
 	gradePostProtectedRoutes := r.Group("api/grade", middleware.AuthorizeJWT(jwtService))
 	{
 		gradePostProtectedRoutes.POST("/", postUserController.Insert)
-		// gradeRoutes.PUT("/", postUserController.Put)
 	}
 
 	gradeAnswerRoutes := r.Group("api/answer/grade")

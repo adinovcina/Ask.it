@@ -36,3 +36,27 @@ export const update = (postData) => (dispatch) => {
       })
     );
 };
+
+export const editAnswer = (postData) => (dispatch) => {
+  axios
+    .put("/answer/", postData)
+    .then((res) => res.data.data)
+    .then((post) =>
+      dispatch({
+        type: types.UPDATE_ANSWER,
+        payload: post,
+      })
+    );
+};
+
+export const deleteAnswer = (postData) => (dispatch) => {
+  axios
+    .delete(`/answer/${postData}`)
+    .then((res) => res.data.data)
+    .then((post) =>
+      dispatch({
+        type: types.DELETE_ANSWER,
+        payload: post,
+      })
+    );
+};

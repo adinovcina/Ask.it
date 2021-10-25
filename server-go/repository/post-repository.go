@@ -12,6 +12,8 @@ type PostRepository interface {
 	Insert(entity.Post) entity.Post
 	Update(entity.Post)
 	UpdateGrade(string, int) []entity.Post
+	MostLikedPost() []entity.MostLikedPost
+	MyPosts(int) []entity.Post
 }
 
 type postConnection struct {
@@ -58,4 +60,16 @@ func (db *postConnection) UpdateGrade(str string, postId int) []entity.Post {
 			UpdateColumn("Likes", gorm.Expr("Likes - ?", 1))
 	}
 	return db.GetAll()
+}
+
+func (db *postConnection) MostLikedPost() []entity.MostLikedPost {
+	var mostLikes []entity.MostLikedPost
+	db.connection.Order("likes desc").Limit(5).Find(&mostLikes)
+	return mostLikes
+}
+
+func (db *postConnection) MyPosts(userId int) []entity.Post {
+	var posts []entity.Post
+	db.connection.Preload("User").Order("postdate desc").Where("userid = ?", userId).Limit(20).Find(&posts)
+	return posts
 }
