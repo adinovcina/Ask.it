@@ -61,8 +61,7 @@ class App extends Component {
   }
 
   handleLoadMore() {
-    var increase = (this.state.loadMore += 5);
-    this.setState({ loadMore: increase });
+    this.setState({ loadMore: this.state.loadMore + 5 });
   }
 
   getDifferenceInDays(date1, date2) {

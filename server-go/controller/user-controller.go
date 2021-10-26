@@ -12,7 +12,7 @@ import (
 type UserController interface {
 	Login(c *gin.Context)
 	Register(c *gin.Context)
-	// ChangePassword(c *gin.Context)
+	ChangePassword(c *gin.Context)
 }
 
 type userController struct {
@@ -69,20 +69,20 @@ func (c *userController) Register(ctx *gin.Context) {
 	}
 }
 
-// func (c *userController) ChangePassword(ctx *gin.Context) {
-// 	var newUser models.User
-// 	errDTO := ctx.ShouldBind(&newUser)
-// 	if errDTO != nil {
-// 		response := helper.BuildErrorResponse("Failed to process request", errDTO.Error(), helper.EmptyObj{})
-// 		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
-// 		return
-// 	}
+func (c *userController) ChangePassword(ctx *gin.Context) {
+	var newUser entity.User
+	errDTO := ctx.ShouldBind(&newUser)
+	if errDTO != nil {
+		response := helper.BuildErrorResponse("Failed to process request", errDTO.Error(), helper.EmptyObj{})
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
+		return
+	}
 
-// 	if !c.userService.IsOldPasswordCorrect(newUser) {
-// 		response := helper.BuildErrorResponse("Failed to process request", "Incorrect old password", helper.EmptyObj{})
-// 		ctx.JSON(http.StatusBadRequest, response)
-// 	} else {
-// 		response := helper.BuildResponse(true, "Password successfully changed", newUser.Username)
-// 		ctx.JSON(http.StatusCreated, response)
-// 	}
-// }
+	if !c.userService.IsOldPasswordCorrect(newUser) {
+		response := helper.BuildErrorResponse("Failed to process request", "Incorrect old password", helper.EmptyObj{})
+		ctx.JSON(http.StatusBadRequest, response)
+	} else {
+		response := helper.BuildResponse(true, "Password successfully changed", newUser.Email)
+		ctx.JSON(http.StatusCreated, response)
+	}
+}

@@ -13,6 +13,7 @@ import Navbar from "./components/Navbar/Navbar";
 import MostLikes from "./components/MostLikes/MostLikes";
 import MostAnswers from "./components/MostAnswers/MostAnswers";
 import MyQuestions from "./components/MyQuestions/MyQuestions";
+import Profile from "./components/Profile/Profile";
 
 axios.defaults.baseURL = "http://localhost:8080/api/";
 store.subscribe(() => {
@@ -32,6 +33,7 @@ ReactDOM.render(
               <Route path="/mostLikes" component={MostLikes} exact />
               <Route path="/mostAnswers" component={MostAnswers} exact />
               <Route path="/myQuestions" component={MyQuestions} exact />
+              <Route path="/profile" component={Profile} exact />
               <Route path="/" component={App} exact />
             </>
           </Switch>

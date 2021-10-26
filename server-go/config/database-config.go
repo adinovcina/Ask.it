@@ -4,16 +4,16 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/joho/godotenv"
+	"github.com/adinovcina/entity"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 func SetupDatabaseConnection() *gorm.DB {
-	errEnv := godotenv.Load()
-	if errEnv != nil {
-		panic("Failed to load env file")
-	}
+	// errEnv := godotenv.Load()
+	// if errEnv != nil {
+	// 	panic("Failed to load env file")
+	// }
 
 	dbUser := os.Getenv("DB_USER")
 	dbPass := os.Getenv("DB_PASS")
@@ -25,5 +25,6 @@ func SetupDatabaseConnection() *gorm.DB {
 	if err != nil {
 		panic("Failed to create a connection to database")
 	}
+	db.AutoMigrate(&entity.User{}, &entity.Post{}, &entity.Answer{}, &entity.AnswerPost{}, &entity.UserPost{})
 	return db
 }

@@ -26,6 +26,9 @@ class MyNavbar extends Component {
             </Nav>
             <Nav>
               {this.props.user.id !== undefined ? (
+                <Nav.Link href="/profile">Profile</Nav.Link>
+              ) : null}
+              {this.props.user.id !== undefined ? (
                 <Nav.Link href="/login" onClick={() => this.props.logout()}>
                   Logout
                 </Nav.Link>

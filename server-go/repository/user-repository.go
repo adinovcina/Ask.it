@@ -13,7 +13,7 @@ type UserRepository interface {
 	VerifyCredential(string, string) interface{}
 	IsDuplicatedEmail(string) bool
 	FindUser(string) entity.User
-	// EditOldPassword(models.User)
+	EditOldPassword(entity.User)
 }
 
 type userConnection struct {
@@ -75,8 +75,8 @@ func (db *userConnection) FindUser(username string) entity.User {
 	return user
 }
 
-// func (db *userConnection) EditOldPassword(user models.User) {
-// 	hash := HashPassword(user.NewPassword)
-// 	db.connection.Model(entity.User{}).Where("username = ?", user.Username).
-// 		UpdateColumn("PasswordHash", hash)
-// }
+func (db *userConnection) EditOldPassword(user entity.User) {
+	hash := HashPassword(user.Password)
+	db.connection.Model(entity.User{}).Where("email = ?", user.Email).
+		UpdateColumn("PasswordHash", hash)
+}

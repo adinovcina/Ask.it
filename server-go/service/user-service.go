@@ -10,7 +10,7 @@ type UserService interface {
 	CreateUser(entity.User) entity.User
 	IsDuplicatedEmail(string) bool
 	VerifyCredential(string, string) interface{}
-	// IsOldPasswordCorrect(models.User) bool
+	IsOldPasswordCorrect(entity.User) bool
 }
 
 type userService struct {
@@ -49,12 +49,12 @@ func (service *userService) IsDuplicatedEmail(email string) bool {
 	return res
 }
 
-// func (service *userService) IsOldPasswordCorrect(user models.User) bool {
-// 	res := service.userRepository.FindUser(user.Username)
-// 	isPasswordCorrect := CheckPasswordHash(user.OldPassword, res.Passwordhash)
-// 	if isPasswordCorrect {
-// 		service.userRepository.EditOldPassword(user)
-// 		return true
-// 	}
-// 	return false
-// }
+func (service *userService) IsOldPasswordCorrect(user entity.User) bool {
+	res := service.userRepository.FindUser(user.Email)
+	isPasswordCorrect := CheckPasswordHash(user.Password, res.Passwordhash)
+	if isPasswordCorrect {
+		service.userRepository.EditOldPassword(user)
+		return true
+	}
+	return false
+}
