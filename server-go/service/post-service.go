@@ -9,7 +9,7 @@ type PostService interface {
 	GetAll() []entity.Post
 	Insert(entity.Post) entity.Post
 	Update(entity.Post)
-	UpdateGrade(string, int) []entity.Post
+	UpdateGrade(string, int) entity.Post
 	MostLikedPost() []entity.MostLikedPost
 	MyPosts(int) []entity.Post
 }
@@ -38,7 +38,7 @@ func (service *postService) Update(post entity.Post) {
 	service.postRepository.Update(post)
 }
 
-func (service *postService) UpdateGrade(str string, postId int) []entity.Post {
+func (service *postService) UpdateGrade(str string, postId int) entity.Post {
 	res := service.postRepository.UpdateGrade(str, postId)
 	return res
 }

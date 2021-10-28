@@ -46,13 +46,15 @@ class MyQuestions extends Component {
     return (
       <>
         {this.renderQuestions()}
-        <Button
-          variant="secondary"
-          id="loadMorePosts"
-          onClick={this.handleLoadMore}
-        >
-          Load more
-        </Button>
+        {this.props.myQuestions.length > 3 ? (
+          <Button
+            variant="secondary"
+            id="loadMorePosts"
+            onClick={this.handleLoadMore}
+          >
+            Load more
+          </Button>
+        ) : null}
       </>
     );
   }

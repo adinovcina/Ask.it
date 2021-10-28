@@ -16,6 +16,8 @@ import MyQuestions from "./components/MyQuestions/MyQuestions";
 import Profile from "./components/Profile/Profile";
 
 axios.defaults.baseURL = "http://localhost:8080/api/";
+// axios.defaults.baseURL = "https://askit-golang.herokuapp.com/api/";
+
 store.subscribe(() => {
   axios.defaults.headers = {
     Authorization: store.getState().login.token,
@@ -27,9 +29,9 @@ ReactDOM.render(
       <BrowserRouter>
         <PersistGate persistor={persistor}>
           <Switch>
-            <Route path="/login" component={LoginRegister} exact />
             <>
               <Navbar />
+              <Route path="/login" component={LoginRegister} exact />
               <Route path="/mostLikes" component={MostLikes} exact />
               <Route path="/mostAnswers" component={MostAnswers} exact />
               <Route path="/myQuestions" component={MyQuestions} exact />

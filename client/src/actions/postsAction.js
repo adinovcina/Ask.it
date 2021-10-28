@@ -27,7 +27,7 @@ export const createPost = (postData) => (dispatch) => {
 
 export const update = (postData) => (dispatch) => {
   axios
-    .post("/grade/", postData)
+    .put("/post/", postData)
     .then((res) => res.data.data)
     .then((post) =>
       dispatch({
@@ -36,3 +36,15 @@ export const update = (postData) => (dispatch) => {
       })
     );
 };
+
+// export const update = (postData) => (dispatch) => {
+//   axios
+//     .post("/grade/", postData)
+//     .then((res) => res.data.data)
+//     .then((post) =>
+//       dispatch({
+//         type: types.UPDATE,
+//         payload: post,
+//       })
+//     );
+// };

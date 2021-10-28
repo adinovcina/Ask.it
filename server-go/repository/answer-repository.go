@@ -11,7 +11,7 @@ type AnswerRepository interface {
 	GetAll() []entity.Answer
 	Insert(entity.Answer) entity.Answer
 	Update(entity.Answer)
-	UpdateGrade(string, int) []entity.Answer
+	UpdateGrade(string, int) entity.Answer
 	MostAnswers() []entity.MostAnswers
 	EditAnswer(entity.Answer) entity.Answer
 	DeleteAnswer(int) entity.Answer
@@ -45,25 +45,33 @@ func (db *answerConnection) Insert(newAnswer entity.Answer) entity.Answer {
 	return ans
 }
 
-func (db *answerConnection) Update(newPost entity.Answer) {
-	if newPost.Likes != 0 {
-		db.connection.Model(entity.Answer{}).Where("id = ?", newPost.Id).
+func (db *answerConnection) Update(newAns entity.Answer) {
+	if newAns.Likes != 0 {
+		db.connection.Model(entity.Answer{}).Where("id = ?", newAns.Id).
 			UpdateColumn("Likes", gorm.Expr("Likes + ?", 1))
 	} else {
-		db.connection.Model(entity.Answer{}).Where("id = ?", newPost.Id).
+		db.connection.Model(entity.Answer{}).Where("id = ?", newAns.Id).
 			UpdateColumn("Dislikes", gorm.Expr("Dislikes + ?", 1))
 	}
 }
 
-func (db *answerConnection) UpdateGrade(str string, postId int) []entity.Answer {
+func (db *answerConnection) UpdateGrade(str string, ansId int) entity.Answer {
+	var ansToUpdate entity.Answer
+	db.connection.Where("id = ?", ansId).First(&ansToUpdate)
 	if str == "dislike" {
-		db.connection.Model(entity.Answer{}).Where("id = ?", postId).
-			UpdateColumn("Dislikes", gorm.Expr("Dislikes - ?", 1))
+		if ansToUpdate.Dislikes > 0 {
+			db.connection.Model(entity.Answer{}).Where("id = ?", ansId).
+				UpdateColumn("Dislikes", gorm.Expr("Dislikes - ?", 1))
+		}
 	} else {
-		db.connection.Model(entity.Answer{}).Where("id = ?", postId).
-			UpdateColumn("Likes", gorm.Expr("Likes - ?", 1))
+		if ansToUpdate.Likes > 0 {
+			db.connection.Model(entity.Answer{}).Where("id = ?", ansId).
+				UpdateColumn("Likes", gorm.Expr("Likes - ?", 1))
+		}
 	}
-	return db.GetAll()
+	var answer entity.Answer
+	db.connection.Where("id = ?", ansId).Preload("User").First(&answer)
+	return answer
 }
 
 func (db *answerConnection) MostAnswers() []entity.MostAnswers {

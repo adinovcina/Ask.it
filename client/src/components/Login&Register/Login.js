@@ -68,7 +68,7 @@ class Login extends Component {
                   type="text"
                   name="email"
                   value={this.state.email}
-                  placeholder="Username"
+                  placeholder="Email"
                   autoComplete="off"
                   required
                 />
@@ -89,7 +89,12 @@ class Login extends Component {
             </div>
           </div>
           <div className="footer">
-            <button type="submit" className="btn" id="loginBtn">
+            <button
+              type="submit"
+              className="btn"
+              id="loginBtn"
+              style={{ color: "white" }}
+            >
               Login
             </button>
           </div>

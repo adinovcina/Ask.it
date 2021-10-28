@@ -62,23 +62,23 @@
 }
 
 #emailErrorMsg {
-  color: #8a1f11;
+  color: red;
   font-size: 15px;
   margin-top: -20px;
-  border: 2px solid #ddd;
+  /* border: 2px solid #ddd; */
   padding: 5px 8px 5px 8px;
-  background-color: #fbe3e4;
+  /* background-color: #fbe3e4; */
   display: none;
 }
 
 #errorMsg {
-  color: #8a1f11;
+  color: red;
   font-size: 15px;
   margin-bottom: 50px;
   display: none;
-  border: 2px solid #ddd;
+  /* border: 2px solid #ddd; */
   padding: 5px 12px 5px 12px;
-  background-color: #fbe3e4;
+  /* background-color: #fbe3e4; */
 }
 
 .App {
@@ -120,7 +120,7 @@
   flex-direction: column;
   justify-content: center;
   height: 90%;
-  background-color: #3498db;
+  background-color: cadetblue;
   width: 100%;
   position: absolute;
   right: -34%;
@@ -165,14 +165,12 @@
 }
 #registerBtn {
   margin-top: 10px;
-  background-color: powderblue;
+  background-color: cadetblue;
   font-size: 18px;
-  font-weight: bold;
   font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
 }
 #loginBtn {
-  font-weight: bold;
-  background-color: powderblue;
+  background-color: cadetblue;
   font-size: 18px;
   font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
 }

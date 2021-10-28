@@ -11,6 +11,7 @@ type AnswerPostRepository interface {
 	UpdateAnswerMark(entity.AnswerPost) entity.AnswerPost
 	VerifyIfGradeExist(entity.AnswerPost) entity.AnswerPost
 	Verify(entity.AnswerPost) bool
+	VerifyIfDataExist(entity.AnswerPost) bool
 }
 
 type answerpostConnection struct {
@@ -31,13 +32,19 @@ func (db *answerpostConnection) GetAll() []entity.AnswerPost {
 
 func (db *answerpostConnection) Insert(newAnswerPost entity.AnswerPost) entity.AnswerPost {
 	db.connection.Exec(`INSERT INTO useranswer (answerid,userid,postid,grade) VALUES (?, ?, ?, ?)`, newAnswerPost.AnswerId, newAnswerPost.UserId, newAnswerPost.PostId, newAnswerPost.Grade)
-	return newAnswerPost
+	var answerPost entity.AnswerPost
+	db.connection.Where("userid = ? and postid = ? and answerid = ?",
+		newAnswerPost.UserId, newAnswerPost.PostId, newAnswerPost.AnswerId).First(&answerPost)
+	return answerPost
 }
 
 func (db *answerpostConnection) UpdateAnswerMark(newAnswerPost entity.AnswerPost) entity.AnswerPost {
 	db.connection.Model(entity.AnswerPost{}).Where("userid = ? and postid = ? and answerid = ?", newAnswerPost.UserId,
 		newAnswerPost.PostId, newAnswerPost.AnswerId).Updates(entity.UserPost{Grade: newAnswerPost.Grade})
-	return newAnswerPost
+	var answerPost entity.AnswerPost
+	db.connection.Where("userid = ? and postid = ? and answerid = ?",
+		newAnswerPost.UserId, newAnswerPost.PostId, newAnswerPost.AnswerId).First(&answerPost)
+	return answerPost
 }
 
 func (db *answerpostConnection) VerifyIfGradeExist(newAnswer entity.AnswerPost) entity.AnswerPost {
@@ -51,5 +58,12 @@ func (db *answerpostConnection) Verify(newAnswer entity.AnswerPost) bool {
 	var answer entity.AnswerPost
 	db.connection.Where("answerid = ? and userid = ? AND postid = ? AND grade = ?",
 		newAnswer.AnswerId, newAnswer.UserId, newAnswer.PostId, newAnswer.Grade).First(&answer)
+	return answer.Id != 0
+}
+
+func (db *answerpostConnection) VerifyIfDataExist(newAnswer entity.AnswerPost) bool {
+	var answer entity.AnswerPost
+	db.connection.Where("userid = ? AND postid = ? AND answerid = ?",
+		newAnswer.UserId, newAnswer.PostId, newAnswer.AnswerId).First(&answer)
 	return answer.Id != 0
 }

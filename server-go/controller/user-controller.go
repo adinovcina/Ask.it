@@ -5,6 +5,7 @@ import (
 
 	"github.com/adinovcina/entity"
 	"github.com/adinovcina/helper"
+	"github.com/adinovcina/models"
 	"github.com/adinovcina/service"
 	"github.com/gin-gonic/gin"
 )
@@ -70,7 +71,7 @@ func (c *userController) Register(ctx *gin.Context) {
 }
 
 func (c *userController) ChangePassword(ctx *gin.Context) {
-	var newUser entity.User
+	var newUser models.UserProfile
 	errDTO := ctx.ShouldBind(&newUser)
 	if errDTO != nil {
 		response := helper.BuildErrorResponse("Failed to process request", errDTO.Error(), helper.EmptyObj{})

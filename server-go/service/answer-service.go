@@ -9,7 +9,7 @@ type AnswerService interface {
 	GetAll() []entity.Answer
 	Insert(entity.Answer) entity.Answer
 	Update(entity.Answer)
-	UpdateGrade(string, int) []entity.Answer
+	UpdateGrade(string, int) entity.Answer
 	MostAnswers() []entity.MostAnswers
 	EditAnswer(entity.Answer) entity.Answer
 	DeleteAnswer(int) entity.Answer
@@ -39,7 +39,7 @@ func (service *answerService) Update(ans entity.Answer) {
 	service.answerRepository.Update(ans)
 }
 
-func (service *answerService) UpdateGrade(str string, postId int) []entity.Answer {
+func (service *answerService) UpdateGrade(str string, postId int) entity.Answer {
 	res := service.answerRepository.UpdateGrade(str, postId)
 	return res
 }

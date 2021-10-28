@@ -11,7 +11,6 @@ class MostAnswers extends Component {
 
   renderPosts() {
     return _.map(this.props.mostAnswers, (ans, key) => {
-      console.log(ans);
       return (
         <Card key={key} style={{ width: "80%", margin: "10px auto" }}>
           <Card.Body>

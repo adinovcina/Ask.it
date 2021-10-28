@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+
 	"github.com/adinovcina/config"
 	"github.com/adinovcina/controller"
 	"github.com/adinovcina/middleware"
@@ -26,9 +28,9 @@ var (
 	userPostService   service.UserPostService   = service.NewUserPostService(userPostRepository)
 	answerPostService service.AnswerPostService = service.NewAnswerPostService(answerPostRepository)
 
-	postController       controller.PostController       = controller.NewPostController(postService, jwtService)
+	postController       controller.PostController       = controller.NewPostController(postService, jwtService, userPostService)
 	authController       controller.UserController       = controller.NewUserController(userService, jwtService)
-	answerController     controller.AnswerController     = controller.NewAnswerController(answerService, jwtService)
+	answerController     controller.AnswerController     = controller.NewAnswerController(answerService, jwtService, answerPostService)
 	postUserController   controller.UserPostController   = controller.NewUserPostController(userPostService, jwtService, postService)
 	answerPostController controller.AnswerPostController = controller.AnswerUserPostController(answerPostService, jwtService, answerService)
 )
@@ -52,6 +54,7 @@ func main() {
 	postProtectedRoutes := r.Group("api/post", middleware.AuthorizeJWT(jwtService))
 	{
 		postProtectedRoutes.POST("/", postController.Insert)
+		postProtectedRoutes.PUT("/", postController.Update)
 		postProtectedRoutes.GET("/myPosts", postController.MyPosts)
 	}
 
@@ -72,6 +75,7 @@ func main() {
 		answerProtectedRoutes.POST("/", answerController.Insert)
 		answerProtectedRoutes.PUT("/", answerController.EditAnswer)
 		answerProtectedRoutes.DELETE("/:id", answerController.DeleteAnswer)
+		answerProtectedRoutes.PUT("/answerGrade", answerController.Update)
 	}
 
 	gradePostRoutes := r.Group("api/grade")
@@ -82,6 +86,7 @@ func main() {
 	gradePostProtectedRoutes := r.Group("api/grade", middleware.AuthorizeJWT(jwtService))
 	{
 		gradePostProtectedRoutes.POST("/", postUserController.Insert)
+		gradePostProtectedRoutes.PUT("/", postUserController.Update)
 	}
 
 	gradeAnswerRoutes := r.Group("api/answer/grade")
@@ -92,7 +97,14 @@ func main() {
 	gradeAnswerProtectedRoutes := r.Group("api/answer/grade", middleware.AuthorizeJWT(jwtService))
 	{
 		gradeAnswerProtectedRoutes.POST("/", answerPostController.Insert)
+		gradeAnswerProtectedRoutes.PUT("/", answerPostController.Update)
 	}
 
-	r.Run()
+	passwordRoutes := r.Group("api/changepassword", middleware.AuthorizeJWT(jwtService))
+	{
+		passwordRoutes.POST("/", authController.ChangePassword)
+	}
+
+	port := os.Getenv("PORT")
+	r.Run(":" + port)
 }

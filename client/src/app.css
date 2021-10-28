@@ -29,7 +29,9 @@
 }
 
 #body {
-  background-color: burlywood;
+  /* background-color: burlywood; */
+  /* background-color: rgba(254, 208, 187); */
+  background-color: #eff7fa;
 }
 
 #comments {
@@ -52,7 +54,7 @@
   transform: translateX(-50%);
 }
 #postForm {
-  background-color: black;
+  background-color: #02223c;
   height: 200px;
   width: 500px;
   margin: 10px auto;
@@ -84,14 +86,15 @@
   box-sizing: border-box;
 }
 #questionnaire {
-  color: red;
+  color: rgb(68, 196, 200);
   font-size: 30px;
 }
 #btnSend {
-  background-color: red;
+  background-color: rgb(68, 196, 200);
   width: 150px;
   height: 40px;
   border-radius: 10px;
   float: right;
   margin: 20px 15px;
+  border-color: rgb(68, 196, 200);
 }

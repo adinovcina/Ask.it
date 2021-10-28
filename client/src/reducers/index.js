@@ -5,6 +5,7 @@ import gradeReducer from "./gradeReducer";
 import userReducer from "./userReducer";
 import mosLikesReducer from "./mostLikesReducer";
 import mostAnswersReducer from "./mostAnswersReducer";
+import passwordReducer from "./passwordReducer";
 import answerReducer from "./answerReducer";
 import myQuestionsReducer from "./myQuestionsReducer";
 import answerGradeReducer from "./answerGradeReducer";
@@ -26,6 +27,7 @@ const rootReducer = combineReducers({
   mostLikes: mosLikesReducer,
   mostAnswers: mostAnswersReducer,
   myQuestions: myQuestionsReducer,
+  password: passwordReducer,
 });
 
 export default persistReducer(persistConfig, rootReducer);

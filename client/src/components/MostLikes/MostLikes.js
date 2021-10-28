@@ -3,7 +3,6 @@ import Card from "react-bootstrap/Card";
 import { connect } from "react-redux";
 import _ from "lodash";
 import { getMostLikes } from "../../actions/mostLikesAction";
-import dateFormat from "dateformat";
 
 class MostLikes extends Component {
   componentWillMount() {
@@ -18,7 +17,7 @@ class MostLikes extends Component {
           key={key}
           style={{ margin: "10px 0px 0px 170px", width: "80%" }}
         >
-          <Card.Header>{dateFormat(post.postdate)}</Card.Header>
+          <Card.Header>{post.postdate}</Card.Header>
           <Card.Body>
             <Card.Title>{post.title}</Card.Title>
             <Card.Text>

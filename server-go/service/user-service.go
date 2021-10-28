@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/adinovcina/entity"
+	"github.com/adinovcina/models"
 	"github.com/adinovcina/repository"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -10,7 +11,7 @@ type UserService interface {
 	CreateUser(entity.User) entity.User
 	IsDuplicatedEmail(string) bool
 	VerifyCredential(string, string) interface{}
-	IsOldPasswordCorrect(entity.User) bool
+	IsOldPasswordCorrect(models.UserProfile) bool
 }
 
 type userService struct {
@@ -49,9 +50,9 @@ func (service *userService) IsDuplicatedEmail(email string) bool {
 	return res
 }
 
-func (service *userService) IsOldPasswordCorrect(user entity.User) bool {
+func (service *userService) IsOldPasswordCorrect(user models.UserProfile) bool {
 	res := service.userRepository.FindUser(user.Email)
-	isPasswordCorrect := CheckPasswordHash(user.Password, res.Passwordhash)
+	isPasswordCorrect := CheckPasswordHash(user.OldPassword, res.Passwordhash)
 	if isPasswordCorrect {
 		service.userRepository.EditOldPassword(user)
 		return true

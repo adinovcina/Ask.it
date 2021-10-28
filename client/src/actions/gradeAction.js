@@ -12,3 +12,27 @@ export const getGrades = () => (dispatch) => {
       })
     );
 };
+
+export const postGrade = (postData) => (dispatch) => {
+  axios
+    .post("/grade/", postData)
+    .then((res) => res.data.data)
+    .then((post) =>
+      dispatch({
+        type: types.NEW_POST_GRADE,
+        payload: post,
+      })
+    );
+};
+
+export const updateGrade = (postData) => (dispatch) => {
+  axios
+    .put("/grade/", postData)
+    .then((res) => res.data.data)
+    .then((post) =>
+      dispatch({
+        type: types.UPDATE_POST_GRADE,
+        payload: post,
+      })
+    );
+};

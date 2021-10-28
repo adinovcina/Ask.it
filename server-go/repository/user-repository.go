@@ -2,6 +2,7 @@ package repository
 
 import (
 	"github.com/adinovcina/entity"
+	"github.com/adinovcina/models"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -9,11 +10,10 @@ import (
 type UserRepository interface {
 	InsertUser(entity.User) entity.User
 	UpdateUser(entity.User) entity.User
-	CheckIfEmailExist(string) bool
 	VerifyCredential(string, string) interface{}
 	IsDuplicatedEmail(string) bool
 	FindUser(string) entity.User
-	EditOldPassword(entity.User)
+	EditOldPassword(models.UserProfile)
 }
 
 type userConnection struct {
@@ -48,12 +48,6 @@ func (db *userConnection) UpdateUser(user entity.User) entity.User {
 	return entity.User{}
 }
 
-func (db *userConnection) CheckIfEmailExist(username string) bool {
-	var user entity.User
-	db.connection.Where(&user, "username = ?", username).Take(&user)
-	return user.Id != 0
-}
-
 func (db *userConnection) VerifyCredential(email string, password string) interface{} {
 	var user entity.User
 	res := db.connection.Where("email = ?", email).Find(&user)
@@ -69,14 +63,18 @@ func (db *userConnection) IsDuplicatedEmail(email string) bool {
 	return user.Id == 0
 }
 
-func (db *userConnection) FindUser(username string) entity.User {
+func (db *userConnection) FindUser(email string) entity.User {
 	var user entity.User
-	db.connection.Where("username = ?", username).Take(&user)
+	db.connection.Where("email = ?", email).Take(&user)
 	return user
 }
 
-func (db *userConnection) EditOldPassword(user entity.User) {
-	hash := HashPassword(user.Password)
-	db.connection.Model(entity.User{}).Where("email = ?", user.Email).
-		UpdateColumn("PasswordHash", hash)
+func (db *userConnection) EditOldPassword(user models.UserProfile) {
+	hash := HashPassword(user.NewPassword)
+
+	var u entity.User
+	db.connection.Where("email = ?", user.Email).First(&u)
+
+	db.connection.Model(&u).Updates(map[string]interface{}{"firstname": user.FirstName,
+		"lastname": user.LastName, "passwordhash": hash})
 }

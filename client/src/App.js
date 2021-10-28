@@ -2,7 +2,7 @@ import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import { update, getPosts, createPost } from "./actions/postsAction";
 import { getAnswers } from "./actions/answerAction";
-import { getGrades } from "./actions/gradeAction";
+import { getGrades, updateGrade, postGrade } from "./actions/gradeAction";
 import { getUser } from "./actions/userAction";
 import { connect } from "react-redux";
 import "./app.css";
@@ -31,33 +31,32 @@ class App extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    this.props.createPost(this.state.post);
-    const post = { ...this.state.post, title: "" };
-    this.setState({ post });
+    if (this.state.post.title.length > 0) {
+      this.props.createPost(this.state.post);
+      const post = { ...this.state.post, title: "" };
+      this.setState({ post });
+    }
   }
 
   handleLike(postId) {
-    const grade = {
+    const newGrade = {
       postid: postId,
       grade: 1,
     };
-    this.props.update(grade);
-    setTimeout(() => {
-      this.props.getGrades();
-      this.props.getPosts();
-    }, 100);
+    this.props.update(newGrade);
+    this.props.postGrade(newGrade);
+    this.props.updateGrade(newGrade);
   }
 
   handleDislike(postId) {
-    const grade = {
+    const newGrade = {
       postid: postId,
       grade: -1,
     };
-    this.props.update(grade);
-    setTimeout(() => {
-      this.props.getGrades();
-      this.props.getPosts();
-    }, 100);
+
+    this.props.update(newGrade);
+    this.props.postGrade(newGrade);
+    this.props.updateGrade(newGrade);
   }
 
   handleLoadMore() {
@@ -114,6 +113,7 @@ class App extends Component {
               <i className="fa fa-thumbs-down fa-dislike" id="thumbDown">
                 {post.dislikes}
               </i>
+              <hr />
               <Answer
                 postId={post.id}
                 numberOfComments={this.renderCountAnswers(post.id)}
@@ -131,10 +131,10 @@ class App extends Component {
     } else {
       return _.map(this.props.posts, (post, key) => {
         var userId = this.props.user.id;
+
         var gradeFilter = _.filter(this.props.grades, function (a) {
           return a.postid === post.id && a.userid === userId;
         });
-
         let days = this.getDifferenceInDays(
           new Date(),
           new Date(post.postdate)
@@ -188,6 +188,7 @@ class App extends Component {
               >
                 {post.dislikes}
               </i>
+              <hr />
               <Answer
                 postId={post.id}
                 numberOfComments={this.renderCountAnswers(post.id)}
@@ -223,7 +224,7 @@ class App extends Component {
                 ask...
               </i>
             </header>
-            <div className="question">
+            <div className="question" style={{ background: "ghostwhite" }}>
               <input
                 id="question"
                 onChange={this.handleChange}
@@ -270,4 +271,6 @@ export default connect(mapStateToProps, {
   getUser,
   update,
   createPost,
+  updateGrade,
+  postGrade,
 })(App);

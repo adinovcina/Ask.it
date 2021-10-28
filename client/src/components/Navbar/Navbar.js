@@ -5,6 +5,7 @@ import Container from "react-bootstrap/Container";
 import { connect } from "react-redux";
 import { getUser } from "../../actions/userAction";
 import { logout } from "../../actions/loginAction";
+import { store } from "../../store";
 
 class MyNavbar extends Component {
   componentWillMount() {
@@ -12,7 +13,12 @@ class MyNavbar extends Component {
   }
   render() {
     return (
-      <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+      <Navbar
+        collapseOnSelect
+        expand="lg"
+        variant="dark"
+        style={{ background: "#02223c" }}
+      >
         <Container>
           <Navbar.Brand href="/">Home</Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
@@ -36,6 +42,9 @@ class MyNavbar extends Component {
                 <Nav.Link href="/login">Login</Nav.Link>
               )}
             </Nav>
+            {/* {store.subscribe(() => {
+              console.log(store.getState());
+            })} */}
           </Navbar.Collapse>
         </Container>
       </Navbar>

@@ -27,7 +27,7 @@ export const createAnswer = (comment) => (dispatch) => {
 
 export const update = (postData) => (dispatch) => {
   axios
-    .post("/answer/grade/", postData)
+    .put("/answer/answerGrade", postData)
     .then((res) => res.data.data)
     .then((post) =>
       dispatch({

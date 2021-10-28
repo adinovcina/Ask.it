@@ -1,7 +1,11 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import Card from "react-bootstrap/Card";
-import { getAnswerGrades } from "../../actions/answerGradeAction";
+import {
+  getAnswerGrades,
+  postAnswerGrade,
+  updateAnswerGrade,
+} from "../../actions/answerGradeAction";
 import { update } from "../../actions/answerAction";
 import { getUser } from "../../actions/userAction";
 import {
@@ -73,29 +77,40 @@ class Answer extends Component {
   }
 
   handleClick(e) {
-    var postId = $(e.target.parentElement.parentElement.parentElement).find(
-      "#postId"
-    );
-    var p = parseInt(postId[0].innerHTML);
-    const answer = {
-      answer: this.state.comment,
-      postid: p,
-    };
-    this.props.createAnswer(answer);
-    this.setState({ comment: "" });
+    if (this.state.comment.length > 0) {
+      var postId = $(e.target.parentElement.parentElement.parentElement).find(
+        "#postId"
+      );
+      var p = parseInt(postId[0].innerHTML);
+      const answer = {
+        answer: this.state.comment,
+        postid: p,
+      };
+      this.props.createAnswer(answer);
+      this.setState({ comment: "" });
+    }
   }
 
   handleLike(id, postid) {
-    const grade = {
+    const newGrade = {
       answerid: id,
       postid: postid,
       grade: 1,
     };
-    this.props.update(grade);
-    setTimeout(() => {
-      this.props.getAnswerGrades();
-      this.props.getAnswers();
-    }, 100);
+    this.props.update(newGrade);
+    this.props.postAnswerGrade(newGrade);
+    this.props.updateAnswerGrade(newGrade);
+  }
+
+  handleDislike(id, postid) {
+    const newGrade = {
+      answerid: id,
+      postid: postid,
+      grade: -1,
+    };
+    this.props.update(newGrade);
+    this.props.postAnswerGrade(newGrade);
+    this.props.updateAnswerGrade(newGrade);
   }
 
   onConfirm() {
@@ -106,7 +121,7 @@ class Answer extends Component {
     return (
       <SweetAlert
         danger
-        title="Sorry, you must be logged in to give comment!"
+        title="Sorry, you must be logged in to give a comment!"
         onConfirm={this.onConfirm}
       ></SweetAlert>
     );
@@ -121,19 +136,6 @@ class Answer extends Component {
     } else {
       this.setState({ show: true });
     }
-  }
-
-  handleDislike(id, postid) {
-    const grade = {
-      answerid: id,
-      postid: postid,
-      grade: -1,
-    };
-    this.props.update(grade);
-    setTimeout(() => {
-      this.props.getAnswerGrades();
-      this.props.getAnswers();
-    }, 100);
   }
 
   handleHide() {
@@ -372,4 +374,6 @@ export default connect(mapStateToProps, {
   createAnswer,
   editAnswer,
   deleteAnswer,
+  postAnswerGrade,
+  updateAnswerGrade,
 })(Answer);

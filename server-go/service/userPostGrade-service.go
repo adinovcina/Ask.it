@@ -11,6 +11,7 @@ type UserPostService interface {
 	UpdateAnswerMark(entity.UserPost) entity.UserPost
 	VerifyIfGradeExist(entity.UserPost) entity.UserPost
 	Verify(entity.UserPost) bool
+	VerifyIfDataExist(entity.UserPost) bool
 }
 
 type userpostService struct {
@@ -45,5 +46,10 @@ func (service *userpostService) VerifyIfGradeExist(userPost entity.UserPost) ent
 
 func (service *userpostService) Verify(userPost entity.UserPost) bool {
 	res := service.userpostRepository.Verify(userPost)
+	return res
+}
+
+func (service *userpostService) VerifyIfDataExist(userPost entity.UserPost) bool {
+	res := service.userpostRepository.VerifyIfDataExist(userPost)
 	return res
 }

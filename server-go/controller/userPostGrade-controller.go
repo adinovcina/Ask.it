@@ -13,6 +13,7 @@ import (
 type UserPostController interface {
 	GetAll(context *gin.Context)
 	Insert(context *gin.Context)
+	Update(context *gin.Context)
 }
 
 type userpostController struct {
@@ -35,6 +36,33 @@ func (c *userpostController) GetAll(context *gin.Context) {
 	context.JSON(http.StatusOK, res)
 }
 
+func (c *userpostController) Update(context *gin.Context) {
+	var userPost entity.UserPost
+	err := context.ShouldBind(&userPost)
+	if err != nil {
+		res := helper.BuildErrorResponse("Failed to process request", err.Error(), helper.EmptyObj{})
+		context.JSON(http.StatusBadRequest, res)
+	} else {
+		authHeader := context.GetHeader("Authorization")
+		userID := service.GetUserIDByToken(authHeader)
+		convertedUserID, err := strconv.ParseInt(userID, 10, 64)
+		if err == nil {
+			userPost.UserId = int(convertedUserID)
+		}
+		res := c.userPostService.VerifyIfGradeExist(userPost)
+
+		if res.Id != 0 {
+			result := c.userPostService.UpdateAnswerMark(userPost)
+			response := helper.BuildResponse(true, "OK", result)
+			context.JSON(http.StatusOK, response)
+		} else {
+			res := helper.BuildErrorResponse("Failed to process request", "Bad request", helper.EmptyObj{})
+			context.JSON(http.StatusOK, res)
+			return
+		}
+	}
+}
+
 func (c *userpostController) Insert(context *gin.Context) {
 	var userPost entity.UserPost
 	err := context.ShouldBind(&userPost)
@@ -49,39 +77,15 @@ func (c *userpostController) Insert(context *gin.Context) {
 			userPost.UserId = int(convertedUserID)
 		}
 
-		res := c.userPostService.VerifyIfGradeExist(userPost)
-		response := c.userPostService.Verify(userPost)
+		response := c.userPostService.VerifyIfDataExist(userPost)
 
 		if response {
 			res := helper.BuildErrorResponse("Failed to process request", "Bad request", helper.EmptyObj{})
-			context.JSON(http.StatusBadRequest, res)
+			context.JSON(http.StatusOK, res)
 			return
-		}
-
-		if res.Id != 0 {
-			result := c.userPostService.UpdateAnswerMark(userPost)
-			like := result.Grade
-			if like == 1 {
-				c.postService.Update(entity.Post{Id: res.PostId, Likes: 1})
-				r := c.postService.UpdateGrade("dislike", res.PostId)
-				response := helper.BuildResponse(true, "OK", r)
-				context.JSON(http.StatusOK, response)
-			} else {
-				c.postService.Update(entity.Post{Id: res.PostId, Dislikes: 1})
-				r := c.postService.UpdateGrade("like", res.PostId)
-				response := helper.BuildResponse(true, "OK", r)
-				context.JSON(http.StatusOK, response)
-			}
-
 		} else {
 			result := c.userPostService.Insert(userPost)
-			like := result.Grade
-			if like == 1 {
-				c.postService.Update(entity.Post{Id: result.PostId, Likes: 1})
-			} else {
-				c.postService.Update(entity.Post{Id: result.PostId, Dislikes: 1})
-			}
-			response := helper.BuildResponse(true, "OK", c.postService.GetAll())
+			response := helper.BuildResponse(true, "OK", result)
 			context.JSON(http.StatusCreated, response)
 		}
 	}

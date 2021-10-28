@@ -1,32 +1,47 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import loginImg from "../../login.svg";
-// import { login } from "../actions/loginAction";
-// import { passwordChange } from "../actions/passwordAction";
+import { getUser } from "../../actions/userAction";
+import Button from "react-bootstrap/Button";
+import "./profile.css";
+import { passwordChange } from "../../actions/passwordAction";
+import { logout } from "../../actions/loginAction";
 
 export class Profile extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: "",
+      firstname: "",
+      lastname: "",
       oldpassword: "",
+      email: "",
       newpassword: "",
+      showFirstName: "",
+      showLastName: "",
     };
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
   }
 
   componentWillMount() {
-    this.setState({ username: this.props.user.username });
+    this.props.getUser();
+    this.setState({
+      firstname: this.props.user.firstname,
+      lastname: this.props.user.lastname,
+      email: this.props.user.email,
+      showFirstName: this.props.user.firstname,
+      showLastName: this.props.user.lastname,
+    });
   }
 
   onSubmit(e) {
     e.preventDefault();
     const passChange = {
-      username: this.state.username,
+      firstname: this.state.firstname,
+      lastname: this.state.lastname,
+      email: this.state.email,
       oldpassword: this.state.oldpassword,
       newpassword: this.state.newpassword,
-      isOldPasswordValid: false,
     };
     this.props.passwordChange(passChange);
   }
@@ -36,45 +51,31 @@ export class Profile extends Component {
   }
 
   componentWillReceiveProps(nextProp) {
+    console.log(nextProp);
     if (nextProp.mypassword.message !== undefined) {
-      this.setState({ isOldPasswordValid: false });
-      document.getElementById("errorMsg").style.display = "block";
-      setTimeout(() => {
-        document.getElementById("errorMsg").style.display = "none";
-      }, 1000);
-    } else if (nextProp.mypassword === this.state.username) {
-      this.setState({ isOldPasswordValid: true });
-      document.getElementById("errorMsg").style.display = "block";
-      document.getElementById("errorMsg").style.color = "green";
-
-      document.getElementById("errorMsg").innerHTML =
+      document.getElementById("msg").style.display = "block";
+    } else if (nextProp.mypassword === this.state.email) {
+      document.getElementById("msg").style.display = "block";
+      document.getElementById("msg").style.color = "green";
+      document.getElementById("msg").innerHTML =
         "Password successfully changed";
-      setTimeout(() => {
-        document.getElementById("errorMsg").style.display = "none";
-      }, 1000);
-      window.location.href = "/";
+      this.props.logout();
+      window.location.href = "/login";
     }
   }
 
   render() {
+    const { firstname, lastname } = this.state;
     return (
       <form
         onSubmit={this.onSubmit}
         className="base-container"
         ref={this.props.containerRef}
-        id="form"
-        style={{
-          margin: "auto",
-          backgroundColor: "rgb(198,234,213)",
-          width: "30%",
-          paddingBottom: "20px",
-          paddingTop: "20px",
-          marginTop: "50px",
-          borderRadius: "50px",
-        }}
+        id="formProfile"
       >
-        <div className="header">
-          Hello, <b>{this.state.username}</b>
+        <div className="header" id="head">
+          Hello,{" "}
+          <b>{this.state.showFirstName + " " + this.state.showLastName}</b>
         </div>
         <div className="content">
           <div className="image">
@@ -82,14 +83,28 @@ export class Profile extends Component {
           </div>
           <div className="form">
             <div className="form-group">
-              <label style={{ fontSize: "17px" }}>Username</label>
+              <label style={{ fontSize: "17px" }}>First name</label>
               <input
                 onChange={this.onChange}
                 type="text"
-                name="username"
-                value={this.state.username}
-                readOnly
-                placeholder="Username"
+                name="firstname"
+                required
+                minLength={3}
+                value={firstname}
+                placeholder="First name"
+                autoComplete="off"
+              />
+            </div>
+            <div className="form-group">
+              <label style={{ fontSize: "17px" }}>Last name</label>
+              <input
+                onChange={this.onChange}
+                type="text"
+                name="lastname"
+                required
+                minLength={3}
+                value={lastname}
+                placeholder="Last name"
                 autoComplete="off"
               />
             </div>
@@ -100,7 +115,8 @@ export class Profile extends Component {
                 type="password"
                 name="oldpassword"
                 required
-                placeholder="Password"
+                minLength={5}
+                placeholder="Old password"
                 autoComplete="off"
               />
             </div>
@@ -112,31 +128,17 @@ export class Profile extends Component {
                 name="newpassword"
                 required
                 minLength={5}
-                placeholder="Password"
+                placeholder="New password"
                 autoComplete="off"
               />
             </div>
-            <p
-              id="errorMsg"
-              style={{
-                color: "red",
-                fontSize: "14px",
-                marginTop: "10px",
-                display: "none",
-              }}
-            >
-              Incorrect old password
-            </p>
+            <p id="msg">Incorrect old password</p>
           </div>
         </div>
         <div className="footer">
-          <button
-            type="submit"
-            className="btn"
-            style={{ backgroundColor: "rgb(125,212,162)", fontWeight: "bold" }}
-          >
-            Change password
-          </button>
+          <Button type="submit" id="btnChange">
+            Change profile
+          </Button>
         </div>
       </form>
     );
@@ -145,9 +147,11 @@ export class Profile extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    user: state.login,
+    user: state.user,
     mypassword: state.password,
   };
 };
 
-export default connect(mapStateToProps, {})(Profile);
+export default connect(mapStateToProps, { getUser, passwordChange, logout })(
+  Profile
+);

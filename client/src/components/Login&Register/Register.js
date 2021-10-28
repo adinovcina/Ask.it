@@ -125,7 +125,12 @@ class Register extends Component {
             </div>
           </div>
           <div className="footer">
-            <button type="submit" className="btn" id="registerBtn">
+            <button
+              type="submit"
+              className="btn"
+              id="registerBtn"
+              style={{ color: "white" }}
+            >
               Register
             </button>
           </div>

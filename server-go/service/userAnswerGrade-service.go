@@ -11,6 +11,7 @@ type AnswerPostService interface {
 	UpdateAnswerMark(entity.AnswerPost) entity.AnswerPost
 	VerifyIfGradeExist(entity.AnswerPost) entity.AnswerPost
 	Verify(entity.AnswerPost) bool
+	VerifyIfDataExist(entity.AnswerPost) bool
 }
 
 type answerpostService struct {
@@ -45,5 +46,10 @@ func (service *answerpostService) VerifyIfGradeExist(answerPost entity.AnswerPos
 
 func (service *answerpostService) Verify(answerPost entity.AnswerPost) bool {
 	res := service.answerpostRepository.Verify(answerPost)
+	return res
+}
+
+func (service *answerpostService) VerifyIfDataExist(answerPost entity.AnswerPost) bool {
+	res := service.answerpostRepository.VerifyIfDataExist(answerPost)
 	return res
 }
