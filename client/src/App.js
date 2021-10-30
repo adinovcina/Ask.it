@@ -9,6 +9,7 @@ import "./app.css";
 import React, { Component } from "react";
 import _ from "lodash";
 import Answer from "./components/Answer/Answer";
+import moment from "moment";
 
 class App extends Component {
   constructor(props) {
@@ -43,7 +44,7 @@ class App extends Component {
       postid: postId,
       grade: 1,
     };
-    this.props.update(newGrade);
+    // this.props.update(newGrade);
     this.props.postGrade(newGrade);
     this.props.updateGrade(newGrade);
   }
@@ -54,17 +55,13 @@ class App extends Component {
       grade: -1,
     };
 
-    this.props.update(newGrade);
+    // this.props.update(newGrade);
     this.props.postGrade(newGrade);
     this.props.updateGrade(newGrade);
   }
 
   handleLoadMore() {
     this.setState({ loadMore: this.state.loadMore + 5 });
-  }
-
-  getDifferenceInDays(date1, date2) {
-    return Math.round((date1 - date2) / (1000 * 60 * 60 * 24), 1);
   }
 
   componentWillMount() {
@@ -83,10 +80,12 @@ class App extends Component {
   renderPosts() {
     if (_.isEmpty(this.props.user)) {
       return _.map(this.props.posts, (post, key) => {
-        let days = this.getDifferenceInDays(
-          new Date(),
-          new Date(post.postdate)
-        );
+        var gradeFilterLikes = _.filter(this.props.grades, function (a) {
+          return a.postid === post.id && a.grade === 1;
+        });
+        var gradeFilterDislikes = _.filter(this.props.grades, function (a) {
+          return a.postid === post.id && a.grade === -1;
+        });
         return (
           <Card id="card" key={key}>
             <Card.Text id="cardText">
@@ -94,11 +93,7 @@ class App extends Component {
             </Card.Text>
             <Card.Body>
               <span id="date">
-                {days === 1
-                  ? days + " day ago"
-                  : days === 0
-                  ? "Today"
-                  : days + " days ago"}
+                {moment(post.postdate).fromNow()}
                 <span id="comments">
                   {this.renderCountAnswers(post.id) === 1
                     ? this.renderCountAnswers(post.id) + " comment"
@@ -108,10 +103,10 @@ class App extends Component {
               <br />
               <br />
               <i className="fa fa-thumbs-up fa-like" id="thumbUp">
-                {post.likes}
+                {gradeFilterLikes.length}
               </i>
               <i className="fa fa-thumbs-down fa-dislike" id="thumbDown">
-                {post.dislikes}
+                {gradeFilterDislikes.length}
               </i>
               <hr />
               <Answer
@@ -135,10 +130,14 @@ class App extends Component {
         var gradeFilter = _.filter(this.props.grades, function (a) {
           return a.postid === post.id && a.userid === userId;
         });
-        let days = this.getDifferenceInDays(
-          new Date(),
-          new Date(post.postdate)
-        );
+
+        var gradeFilterLikes = _.filter(this.props.grades, function (a) {
+          return a.postid === post.id && a.grade === 1;
+        });
+        var gradeFilterDislikes = _.filter(this.props.grades, function (a) {
+          return a.postid === post.id && a.grade === -1;
+        });
+
         return (
           <Card id="card" key={key}>
             <i id="postId" style={{ display: "none" }}>
@@ -149,11 +148,7 @@ class App extends Component {
             </Card.Text>
             <Card.Body>
               <span id="date">
-                {days === 1
-                  ? days + " day ago"
-                  : days === 0
-                  ? "Today"
-                  : days + " days ago"}
+                {moment(post.postdate).fromNow()}
                 <span id="comments">
                   {this.renderCountAnswers(post.id) === 1
                     ? this.renderCountAnswers(post.id) + " comment"
@@ -165,6 +160,8 @@ class App extends Component {
               <i
                 className="fa fa-thumbs-up fa-like"
                 style={{
+                  cursor: "pointer",
+                  fontSize: "18px",
                   color:
                     gradeFilter[0] !== undefined && gradeFilter[0].grade === 1
                       ? "green"
@@ -172,13 +169,15 @@ class App extends Component {
                 }}
                 onClick={() => this.handleLike(post.id)}
               >
-                {post.likes}{" "}
+                {gradeFilterLikes.length}
               </i>
               <i
                 className="fa fa-thumbs-down fa-dislike"
                 style={{
-                  paddingLeft: "20px",
-                  paddingBottom: "20px",
+                  cursor: "pointer",
+                  fontSize: "18px",
+                  marginLeft: "20px",
+                  marginBottom: "20px",
                   color:
                     gradeFilter[0] !== undefined && gradeFilter[0].grade === -1
                       ? "red"
@@ -186,7 +185,7 @@ class App extends Component {
                 }}
                 onClick={() => this.handleDislike(post.id)}
               >
-                {post.dislikes}
+                {gradeFilterDislikes.length}
               </i>
               <hr />
               <Answer
@@ -243,13 +242,15 @@ class App extends Component {
           </div>
         ) : null}
         {this.renderPosts()}
-        <Button
-          variant="secondary"
-          id="loadMorePosts"
-          onClick={this.handleLoadMore}
-        >
-          Load more
-        </Button>
+        {this.props.posts.length > this.state.loadMore ? (
+          <Button
+            variant="secondary"
+            id="loadMorePosts"
+            onClick={this.handleLoadMore}
+          >
+            Load more
+          </Button>
+        ) : null}
       </>
     );
   }

@@ -14,25 +14,28 @@ import (
 )
 
 var (
-	db                   *gorm.DB                        = config.SetupDatabaseConnection()
-	postRepository       repository.PostRepository       = repository.NewPostRepository(db)
-	userRepository       repository.UserRepository       = repository.NewUserRepository(db)
-	answerRepository     repository.AnswerRepository     = repository.NewAnswerRepository(db)
-	userPostRepository   repository.UserPostRepository   = repository.NewUserPostRepository(db)
-	answerPostRepository repository.AnswerPostRepository = repository.NewAnswerPostRepository(db)
+	db                     *gorm.DB                          = config.SetupDatabaseConnection()
+	postRepository         repository.PostRepository         = repository.NewPostRepository(db)
+	userRepository         repository.UserRepository         = repository.NewUserRepository(db)
+	answerRepository       repository.AnswerRepository       = repository.NewAnswerRepository(db)
+	userPostRepository     repository.UserPostRepository     = repository.NewUserPostRepository(db)
+	answerPostRepository   repository.AnswerPostRepository   = repository.NewAnswerPostRepository(db)
+	notificationRepository repository.NotificationRepository = repository.NewNotificationRepository(db)
 
-	jwtService        service.JWTService        = service.NewJWTService()
-	postService       service.PostService       = service.NewPostService(postRepository)
-	userService       service.UserService       = service.NewUserService(userRepository)
-	answerService     service.AnswerService     = service.NewAnswerService(answerRepository)
-	userPostService   service.UserPostService   = service.NewUserPostService(userPostRepository)
-	answerPostService service.AnswerPostService = service.NewAnswerPostService(answerPostRepository)
+	jwtService          service.JWTService          = service.NewJWTService()
+	postService         service.PostService         = service.NewPostService(postRepository)
+	userService         service.UserService         = service.NewUserService(userRepository)
+	answerService       service.AnswerService       = service.NewAnswerService(answerRepository)
+	userPostService     service.UserPostService     = service.NewUserPostService(userPostRepository)
+	answerPostService   service.AnswerPostService   = service.NewAnswerPostService(answerPostRepository)
+	notificationService service.NotificationService = service.NewNotificationService(notificationRepository)
 
-	postController       controller.PostController       = controller.NewPostController(postService, jwtService, userPostService)
-	authController       controller.UserController       = controller.NewUserController(userService, jwtService)
-	answerController     controller.AnswerController     = controller.NewAnswerController(answerService, jwtService, answerPostService)
-	postUserController   controller.UserPostController   = controller.NewUserPostController(userPostService, jwtService, postService)
-	answerPostController controller.AnswerPostController = controller.AnswerUserPostController(answerPostService, jwtService, answerService)
+	postController         controller.PostController         = controller.NewPostController(postService, jwtService, userPostService)
+	authController         controller.UserController         = controller.NewUserController(userService, jwtService)
+	answerController       controller.AnswerController       = controller.NewAnswerController(answerService, jwtService, answerPostService)
+	postUserController     controller.UserPostController     = controller.NewUserPostController(userPostService, jwtService, postService)
+	answerPostController   controller.AnswerPostController   = controller.AnswerUserPostController(answerPostService, jwtService, answerService)
+	notificationController controller.NotificationController = controller.NewNotificationController(notificationService, jwtService)
 )
 
 func main() {
@@ -54,7 +57,6 @@ func main() {
 	postProtectedRoutes := r.Group("api/post", middleware.AuthorizeJWT(jwtService))
 	{
 		postProtectedRoutes.POST("/", postController.Insert)
-		postProtectedRoutes.PUT("/", postController.Update)
 		postProtectedRoutes.GET("/myPosts", postController.MyPosts)
 	}
 
@@ -75,7 +77,6 @@ func main() {
 		answerProtectedRoutes.POST("/", answerController.Insert)
 		answerProtectedRoutes.PUT("/", answerController.EditAnswer)
 		answerProtectedRoutes.DELETE("/:id", answerController.DeleteAnswer)
-		answerProtectedRoutes.PUT("/answerGrade", answerController.Update)
 	}
 
 	gradePostRoutes := r.Group("api/grade")
@@ -103,6 +104,11 @@ func main() {
 	passwordRoutes := r.Group("api/changepassword", middleware.AuthorizeJWT(jwtService))
 	{
 		passwordRoutes.POST("/", authController.ChangePassword)
+	}
+
+	notificationRoutes := r.Group("api/notification", middleware.AuthorizeJWT(jwtService))
+	{
+		notificationRoutes.GET("/", notificationController.GetAll)
 	}
 
 	port := os.Getenv("PORT")

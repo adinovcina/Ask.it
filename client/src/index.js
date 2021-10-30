@@ -14,6 +14,7 @@ import MostLikes from "./components/MostLikes/MostLikes";
 import MostAnswers from "./components/MostAnswers/MostAnswers";
 import MyQuestions from "./components/MyQuestions/MyQuestions";
 import Profile from "./components/Profile/Profile";
+import Notifications from "./components/Notifications/Notifications";
 
 axios.defaults.baseURL = "http://localhost:8080/api/";
 // axios.defaults.baseURL = "https://askit-golang.herokuapp.com/api/";
@@ -36,6 +37,7 @@ ReactDOM.render(
               <Route path="/mostAnswers" component={MostAnswers} exact />
               <Route path="/myQuestions" component={MyQuestions} exact />
               <Route path="/profile" component={Profile} exact />
+              <Route path="/notifications" component={Notifications} exact />
               <Route path="/" component={App} exact />
             </>
           </Switch>

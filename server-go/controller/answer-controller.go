@@ -16,7 +16,6 @@ type AnswerController interface {
 	MostAnswers(context *gin.Context)
 	EditAnswer(context *gin.Context)
 	DeleteAnswer(context *gin.Context)
-	Update(*gin.Context)
 }
 
 type answerController struct {
@@ -87,44 +86,5 @@ func (c *answerController) DeleteAnswer(context *gin.Context) {
 		result := c.answerService.DeleteAnswer(stringToId)
 		response := helper.BuildResponse(true, "OK", result)
 		context.JSON(http.StatusOK, response)
-	}
-}
-
-func (c *answerController) Update(context *gin.Context) {
-	var userAnswer entity.AnswerPost
-	err := context.ShouldBind(&userAnswer)
-	if err != nil {
-		res := helper.BuildErrorResponse("Failed to process request", err.Error(), helper.EmptyObj{})
-		context.JSON(http.StatusBadRequest, res)
-	}
-	authHeader := context.GetHeader("Authorization")
-	userID := service.GetUserIDByToken(authHeader)
-	convertedUserID, err := strconv.ParseInt(userID, 10, 64)
-	if err == nil {
-		userAnswer.UserId = int(convertedUserID)
-	}
-	grade := userAnswer.Grade
-	ifExist := c.answerpostService.Verify(userAnswer)
-
-	if grade == 1 {
-		if !ifExist {
-			c.answerService.Update(entity.Answer{Id: userAnswer.AnswerId, Likes: 1})
-			r := c.answerService.UpdateGrade("dislike", userAnswer.AnswerId)
-			response := helper.BuildResponse(true, "OK", r)
-			context.JSON(http.StatusOK, response)
-		} else {
-			res := helper.BuildResponse(true, "OK", helper.EmptyObj{})
-			context.JSON(http.StatusOK, res)
-		}
-	} else {
-		if !ifExist {
-			c.answerService.Update(entity.Answer{Id: userAnswer.AnswerId, Dislikes: 1})
-			r := c.answerService.UpdateGrade("like", userAnswer.AnswerId)
-			response := helper.BuildResponse(true, "OK", r)
-			context.JSON(http.StatusOK, response)
-		} else {
-			res := helper.BuildResponse(true, "OK", helper.EmptyObj{})
-			context.JSON(http.StatusOK, res)
-		}
 	}
 }

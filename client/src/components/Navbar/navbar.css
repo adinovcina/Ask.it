@@ -1,0 +1,29 @@
+#showAll {
+  font-size: 14px;
+  font-weight: bold;
+  color: rgb(68, 196, 200);
+  cursor: pointer;
+  text-align: center;
+}
+#showAll:hover {
+  background-color: white;
+}
+#item:hover {
+  background-color: white;
+}
+.dropdown-menu.show {
+  max-height: 200px;
+  overflow-y: scroll;
+}
+#item {
+  pointer-events: none;
+}
+#navbar {
+  background: #02223c;
+}
+span.num {
+  position: absolute;
+  top: 1px;
+  font-size: 13px;
+  right: 18px;
+}

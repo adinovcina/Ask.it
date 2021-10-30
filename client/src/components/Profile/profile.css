@@ -3,24 +3,20 @@
   background-color: cadetblue;
   width: 30%;
   padding-bottom: 20px;
-  padding-top: 30px;
+  padding-top: 10px;
   margin-top: 10px;
   border-radius: 10px;
-  color: white;
+  color: #02223c;
 }
 
-.lbl {
-  font-weight: normal;
-  font-size: 18px;
-}
 #btnChange {
   background-color: #02223c;
   border: #02223c;
 }
 
 #msg {
-  color: red;
-  font-size: 14px;
+  color: rgb(128, 25, 25);
+  font-size: 15px;
   padding-bottom: 10px;
   margin-top: -15px;
   display: none;

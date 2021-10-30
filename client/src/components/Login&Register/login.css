@@ -65,9 +65,7 @@
   color: red;
   font-size: 15px;
   margin-top: -20px;
-  /* border: 2px solid #ddd; */
   padding: 5px 8px 5px 8px;
-  /* background-color: #fbe3e4; */
   display: none;
 }
 
@@ -76,9 +74,7 @@
   font-size: 15px;
   margin-bottom: 50px;
   display: none;
-  /* border: 2px solid #ddd; */
   padding: 5px 12px 5px 12px;
-  /* background-color: #fbe3e4; */
 }
 
 .App {

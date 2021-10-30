@@ -10,8 +10,6 @@ import (
 type PostRepository interface {
 	GetAll() []entity.Post
 	Insert(entity.Post) entity.Post
-	Update(entity.Post)
-	UpdateGrade(string, int) entity.Post
 	MostLikedPost() []entity.MostLikedPost
 	MyPosts(int) []entity.Post
 }
@@ -43,39 +41,12 @@ func (db *postConnection) Insert(newPost entity.Post) entity.Post {
 	return post
 }
 
-func (db *postConnection) Update(newPost entity.Post) {
-	if newPost.Likes != 0 {
-		db.connection.Model(entity.Post{}).Where("id = ?", newPost.Id).
-			UpdateColumn("Likes", gorm.Expr("Likes + ?", 1))
-	} else {
-		db.connection.Model(entity.Post{}).Where("id = ?", newPost.Id).
-			UpdateColumn("Dislikes", gorm.Expr("Dislikes + ?", 1))
-	}
-}
-
-func (db *postConnection) UpdateGrade(str string, postId int) entity.Post {
-	var postToUpdate entity.Post
-	db.connection.Where("id = ?", postId).First(&postToUpdate)
-	if str == "dislike" {
-		if postToUpdate.Dislikes > 0 {
-			db.connection.Model(entity.Post{}).Where("id = ?", postId).
-				UpdateColumn("Dislikes", gorm.Expr("Dislikes - ?", 1))
-		}
-	} else {
-		if postToUpdate.Likes > 0 {
-			db.connection.Model(entity.Post{}).Where("id = ?", postId).
-				UpdateColumn("Likes", gorm.Expr("Likes - ?", 1))
-		}
-	}
-	var post entity.Post
-	db.connection.Where("id = ?", postId).Preload("User").First(&post)
-	return post
-}
-
 func (db *postConnection) MostLikedPost() []entity.MostLikedPost {
-	var mostLikes []entity.MostLikedPost
-	db.connection.Order("likes desc").Where("likes > 0").Limit(5).Find(&mostLikes)
-	return mostLikes
+	var ml []entity.MostLikedPost
+	db.connection.Table("userpost").Preload("Post").Model(&entity.MostAnswers{}).
+		Select("count(postid) as Likes,post.title,post.PostDate").Joins("LEFT JOIN post on post.id = userpost.postid").
+		Where("grade = 1").Group("postid").Find(&ml)
+	return ml
 }
 
 func (db *postConnection) MyPosts(userId int) []entity.Post {

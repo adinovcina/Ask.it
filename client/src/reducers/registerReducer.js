@@ -1,12 +1,12 @@
 import * as types from "../actionTypes";
 
-const loginReducer = (state = {}, action) => {
+const registerReducer = (state = {}, action) => {
   switch (action.type) {
-    case types.LOGIN:
+    case types.REGISTER:
       return action.payload;
     default:
       return state;
   }
 };
 
-export default loginReducer;
+export default registerReducer;

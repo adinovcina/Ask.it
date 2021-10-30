@@ -37,19 +37,19 @@
 }
 
 #trashBtn {
-  font-size: 20px;
+  font-size: 22px;
   color: orangered;
   float: right;
 }
 #editBtn {
-  font-size: 20px;
+  font-size: 22px;
   color: black;
   float: right;
   margin-right: 15px;
 }
 #cancelBtn {
   float: right;
-  font-size: 20px;
+  font-size: 22px;
   margin: -2px 15px 0px 0px;
   display: none;
 }

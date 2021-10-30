@@ -6,23 +6,18 @@ const postReducer = (state = [], action) => {
       return action.payload;
     case types.NEW_POST:
       return [...state, action.payload];
-    // return {
-    //   ...state,
-    //   item: action.payload,
-    // };
-    case types.UPDATE:
-      return state.map((post) => {
-        if (post.id === action.payload.id) {
-          return {
-            ...post,
-            ...action.payload,
-          };
-        } else {
-          return post;
-        }
-      });
     // case types.UPDATE:
-    //   return action.payload;
+    //   return state.map((post) => {
+    //     if (post.id === action.payload.id) {
+    //       return {
+    //         ...post,
+    //         ...action.payload,
+    //       };
+    //     } else {
+    //       return post;
+    //     }
+    //   });
+
     default:
       return state;
   }

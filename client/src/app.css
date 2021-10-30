@@ -11,10 +11,12 @@
 
 #thumbUp {
   color: green;
+  font-size: 20px;
   padding-bottom: 20px;
 }
 #thumbDown {
   color: red;
+  font-size: 20px;
   padding-left: 20px;
 }
 
@@ -29,8 +31,6 @@
 }
 
 #body {
-  /* background-color: burlywood; */
-  /* background-color: rgba(254, 208, 187); */
   background-color: #eff7fa;
 }
 

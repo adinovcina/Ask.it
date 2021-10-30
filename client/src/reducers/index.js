@@ -5,8 +5,10 @@ import gradeReducer from "./gradeReducer";
 import userReducer from "./userReducer";
 import mosLikesReducer from "./mostLikesReducer";
 import mostAnswersReducer from "./mostAnswersReducer";
+import notificationReducer from "./notificationReducer";
 import passwordReducer from "./passwordReducer";
 import answerReducer from "./answerReducer";
+import registerReducer from "./registerReducer";
 import myQuestionsReducer from "./myQuestionsReducer";
 import answerGradeReducer from "./answerGradeReducer";
 import { persistReducer } from "redux-persist";
@@ -19,6 +21,7 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   login: loginReducer,
+  register: registerReducer,
   posts: postReducer,
   answers: answerReducer,
   grades: gradeReducer,
@@ -28,6 +31,7 @@ const rootReducer = combineReducers({
   mostAnswers: mostAnswersReducer,
   myQuestions: myQuestionsReducer,
   password: passwordReducer,
+  notifications: notificationReducer,
 });
 
 export default persistReducer(persistConfig, rootReducer);

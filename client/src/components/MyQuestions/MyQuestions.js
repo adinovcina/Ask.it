@@ -4,6 +4,7 @@ import Button from "react-bootstrap/Button";
 import { getMyQuestions } from "../../actions/myQuestionsAction";
 import { connect } from "react-redux";
 import _ from "lodash";
+import NoDataFound from "../NoDataFound";
 
 class MyQuestions extends Component {
   constructor(props) {
@@ -46,7 +47,7 @@ class MyQuestions extends Component {
     return (
       <>
         {this.renderQuestions()}
-        {this.props.myQuestions.length > 3 ? (
+        {this.props.myQuestions.length > this.state.loadMore ? (
           <Button
             variant="secondary"
             id="loadMorePosts"
@@ -55,6 +56,7 @@ class MyQuestions extends Component {
             Load more
           </Button>
         ) : null}
+        {this.props.myQuestions.length === 0 ? <NoDataFound /> : null}
       </>
     );
   }

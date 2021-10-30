@@ -25,29 +25,6 @@ export const login = (postData) => (dispatch) => {
     );
 };
 
-export const register = (postData) => (dispatch) => {
-  axios
-    .post("/auth/register", postData, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-    })
-    .then((res) => res.data.data)
-    .then((post) =>
-      dispatch({
-        type: types.REGISTER,
-        payload: post,
-      })
-    )
-    .catch((err) =>
-      dispatch({
-        type: types.REGISTER,
-        payload: err,
-      })
-    );
-};
-
 export const logout = () => (dispatch) => {
   persistor.pause();
   persistor.flush().then(() => {

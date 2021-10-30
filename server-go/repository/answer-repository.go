@@ -4,17 +4,17 @@ import (
 	"time"
 
 	"github.com/adinovcina/entity"
+	"github.com/pusher/pusher-http-go"
 	"gorm.io/gorm"
 )
 
 type AnswerRepository interface {
 	GetAll() []entity.Answer
 	Insert(entity.Answer) entity.Answer
-	Update(entity.Answer)
-	UpdateGrade(string, int) entity.Answer
 	MostAnswers() []entity.MostAnswers
 	EditAnswer(entity.Answer) entity.Answer
 	DeleteAnswer(int) entity.Answer
+	SendNotification(entity.Answer)
 }
 
 type answerConnection struct {
@@ -41,37 +41,29 @@ func (db *answerConnection) Insert(newAnswer entity.Answer) entity.Answer {
 	VALUES (?, ?, ?, ?, ?, ?, ?)`,
 		newAnswer.UserId, newAnswer.PostId, newAnswer.Answer, formatedDate, 0, 0, 0)
 	var ans entity.Answer
-	db.connection.Last(&ans)
+	db.connection.Preload("User").Last(&ans)
+	db.SendNotification(ans)
 	return ans
 }
 
-func (db *answerConnection) Update(newAns entity.Answer) {
-	if newAns.Likes != 0 {
-		db.connection.Model(entity.Answer{}).Where("id = ?", newAns.Id).
-			UpdateColumn("Likes", gorm.Expr("Likes + ?", 1))
-	} else {
-		db.connection.Model(entity.Answer{}).Where("id = ?", newAns.Id).
-			UpdateColumn("Dislikes", gorm.Expr("Dislikes + ?", 1))
-	}
-}
-
-func (db *answerConnection) UpdateGrade(str string, ansId int) entity.Answer {
-	var ansToUpdate entity.Answer
-	db.connection.Where("id = ?", ansId).First(&ansToUpdate)
-	if str == "dislike" {
-		if ansToUpdate.Dislikes > 0 {
-			db.connection.Model(entity.Answer{}).Where("id = ?", ansId).
-				UpdateColumn("Dislikes", gorm.Expr("Dislikes - ?", 1))
+func (db *answerConnection) SendNotification(ans entity.Answer) {
+	var userWhoPosted entity.Post
+	db.connection.Where("id = ?", ans.PostId).First(&userWhoPosted)
+	if userWhoPosted.UserId != ans.User.Id {
+		notif := entity.Notification{PostId: ans.PostId,
+			User_sending: ans.User.FirstName + " " + ans.User.LastName, User_receivingID: userWhoPosted.UserId}
+		pusherClient := pusher.Client{
+			AppID:   "1289244",
+			Key:     "d88f98f756818528eb43",
+			Secret:  "6049b8b0725a1ea31c4a",
+			Cluster: "eu",
+			Secure:  true,
 		}
-	} else {
-		if ansToUpdate.Likes > 0 {
-			db.connection.Model(entity.Answer{}).Where("id = ?", ansId).
-				UpdateColumn("Likes", gorm.Expr("Likes - ?", 1))
-		}
+		db.connection.Exec(`INSERT INTO notification (User_sending, User_receiving, PostId, CommentDate) 
+	 VALUES (?, ?, ?, ?)`, ans.User.FirstName+" "+ans.User.LastName,
+			userWhoPosted.UserId, ans.PostId, ans.PostDate)
+		pusherClient.Trigger("notification", "sendNotif", notif)
 	}
-	var answer entity.Answer
-	db.connection.Where("id = ?", ansId).Preload("User").First(&answer)
-	return answer
 }
 
 func (db *answerConnection) MostAnswers() []entity.MostAnswers {

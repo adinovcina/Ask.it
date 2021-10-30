@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./login.css";
 import loginImg from "../../login.svg";
-import { register } from "../../actions/loginAction";
+import { register } from "../../actions/registerAction";
 import { connect } from "react-redux";
 import SweetAlert from "react-bootstrap-sweetalert";
 
@@ -36,7 +36,7 @@ class Register extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.login.message !== undefined) {
+    if (nextProps.register.message !== undefined) {
       document.getElementById("emailErrorMsg").style.display = "block";
     } else this.setState({ show: true });
   }
@@ -143,7 +143,7 @@ class Register extends Component {
 
 function mapStateToProps(state) {
   return {
-    login: state.login,
+    register: state.register,
   };
 }
 

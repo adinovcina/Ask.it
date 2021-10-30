@@ -19,17 +19,17 @@ const answerReducer = (state = [], action) => {
           return ans;
         }
       });
-    case types.UPDATE_ANSWER_MARK:
-      return state.map((ans) => {
-        if (ans.id === action.payload.id) {
-          return {
-            ...ans,
-            ...action.payload,
-          };
-        } else {
-          return ans;
-        }
-      });
+    // case types.UPDATE_ANSWER_MARK:
+    //   return state.map((ans) => {
+    //     if (ans.id === action.payload.id) {
+    //       return {
+    //         ...ans,
+    //         ...action.payload,
+    //       };
+    //     } else {
+    //       return ans;
+    //     }
+    //   });
     default:
       return state;
   }

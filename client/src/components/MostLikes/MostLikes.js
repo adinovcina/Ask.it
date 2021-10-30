@@ -17,7 +17,7 @@ class MostLikes extends Component {
           key={key}
           style={{ margin: "10px 0px 0px 170px", width: "80%" }}
         >
-          <Card.Header>{post.postdate}</Card.Header>
+          <Card.Header>{post.postdate.substring(0, 10)}</Card.Header>
           <Card.Body>
             <Card.Title>{post.title}</Card.Title>
             <Card.Text>

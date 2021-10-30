@@ -6,8 +6,6 @@ type Post struct {
 	PostDate string `json:"postdate"`
 	User     User   `json:"User"`
 	UserId   int    `json:"Userid"`
-	Likes    int    `json:"likes"`
-	Dislikes int    `json:"dislikes"`
 }
 
 func (Post) TableName() string {

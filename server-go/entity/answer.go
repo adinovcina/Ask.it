@@ -7,8 +7,6 @@ type Answer struct {
 	User       User   `json:"User"`
 	Answer     string `json:"answer"`
 	PostDate   string `json:"postdate"`
-	Likes      int    `json:"likes"`
-	Dislikes   int    `json:"dislikes"`
 	Is_Deleted int    `json:"is_deleted"`
 }
 
